@@ -11,3 +11,7 @@ bracket-random = { git = "https://github.com/amethyst/bracket-lib", rev = "927d2
 enum-map = { version = "0.6.4" }
 xdg = { version = "^2.2" }
 textwrap = { version = "^0.13" }
+
+[target.wasm32-unknown-unknown.dependencies]
+web-sys = { version = "^0.3.48", features = ["Storage"] }
+wasm-bindgen = { version = "0.2.71" }

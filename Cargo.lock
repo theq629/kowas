@@ -1316,6 +1316,8 @@ dependencies = [
  "bracket-terminal",
  "enum-map",
  "textwrap",
+ "wasm-bindgen",
+ "web-sys",
  "xdg",
 ]
 
