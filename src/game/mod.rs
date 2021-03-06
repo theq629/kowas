@@ -1,6 +1,7 @@
 pub mod terrain;
 pub mod graphics;
 pub mod components;
+mod systems;
 mod state;
 
 use bracket_geometry::prelude::Point;
@@ -12,9 +13,18 @@ use terrain::Terrain;
 
 fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Terrain> {
     let mut terrain = TileMap::new(dim, |_| Terrain::Empty);
-    for _ in 0..10 {
-        let pos = Point::new(rng.range(0, dim.x), rng.range(0, dim.y));
-        terrain[pos] = Terrain::Floor;
+
+    let mut y = 0;
+    loop {
+        y += rng.range(2, 8);
+        if y >= dim.y {
+            break;
+        }
+        for x in 0..dim.x {
+            if rng.range(0, 10) < 7 {
+                terrain[Point::new(x, y)] = Terrain::Floor;
+            }
+        }
     }
     terrain
 }
@@ -22,12 +32,12 @@ fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Terrain>
 pub fn new_game() -> GameState {
     let mut world = World::new();
 
-    let dim = Point::new(8, 16);
+    let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
     let terrain = make_terrain(dim, &mut rng);
 
     let player = world.spawn((
-        components::Position(Point::new(4, 1)),
+        components::Position(Point::new(dim.x / 2, 1)),
         components::Renderable(graphics::Graphic::Player)
     ));
 
@@ -36,4 +46,8 @@ pub fn new_game() -> GameState {
         terrain,
         player
     }
+}
+
+pub fn tick(state: &mut GameState) {
+    systems::gravity(state);
 }

@@ -14,4 +14,11 @@ impl Terrain {
             Terrain::Floor => Graphic::Floor
         }
     }
+
+    pub fn is_solid(&self) -> bool {
+        match self {
+            Terrain::Empty => false,
+            Terrain::Floor => true
+        }
+    }
 }
