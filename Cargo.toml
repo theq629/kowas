@@ -9,6 +9,9 @@ bracket-terminal = { git = "https://github.com/amethyst/bracket-lib", rev = "927
 bracket-geometry = { git = "https://github.com/amethyst/bracket-lib", rev = "927d2292b5e74dd6ef16b46bc9e40c815c36c8a0", features = ["serde"] }
 bracket-random = { git = "https://github.com/amethyst/bracket-lib", rev = "927d2292b5e74dd6ef16b46bc9e40c815c36c8a0" }
 enum-map = { version = "0.6.4" }
+serde = { version = "1.0.123", features = ["derive"] }
+serde_cbor = { version = "^0.11" }
+hecs = { version = "0.3.2", features=["serde"] }
 xdg = { version = "^2.2" }
 textwrap = { version = "^0.13" }
 
