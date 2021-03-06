@@ -25,6 +25,7 @@ pub struct UiState {
     quitter: Option<Box<dyn Quitter>>,
     pub ui_can_quit: bool,
     pub ui_save_storage_avail: bool,
+    pub show_intro_dialog: bool,
     pub graphics: GraphicLookup,
     pub game_state: Option<GameState>
 }
@@ -84,6 +85,7 @@ impl BracketState {
             graphics: graphics,
             ui_can_quit: quitter.is_some(),
             ui_save_storage_avail: save_file.is_some(),
+            show_intro_dialog: false,
             save_file: save_file,
             quitter: quitter,
             game_state: None
@@ -140,7 +142,9 @@ impl BracketState {
                 self.state.new_game();
                 self.views.clear();
                 self.views.push(GameView::new());
-                self.views.push(make_intro_dialog());
+                if self.state.show_intro_dialog {
+                    self.views.push(make_intro_dialog());
+                }
             },
             UiStateAction::ContinueGame => {
                 match self.state.load_game() {
