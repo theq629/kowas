@@ -1,6 +1,7 @@
 pub mod terrain;
 pub mod graphics;
 pub mod components;
+pub mod actions;
 mod systems;
 mod state;
 
@@ -10,6 +11,7 @@ use hecs::World;
 pub use state::GameState;
 use crate::tilemap::TileMap;
 use terrain::Terrain;
+use actions::Action;
 
 fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Terrain> {
     let mut terrain = TileMap::new(dim, |_| Terrain::Empty);
@@ -48,6 +50,19 @@ pub fn new_game() -> GameState {
     }
 }
 
-pub fn tick(state: &mut GameState) {
+pub fn tick(state: &mut GameState, player_action: Action) {
+    match player_action {
+        Action::DoNothing => {},
+        Action::MoveLeft => {
+            let mut query = state.world.query_one::<(&mut components::Position,)>(state.player).unwrap();
+            let (pos,) = query.get().unwrap();
+            pos.0.x -= 1;
+        },
+        Action::MoveRight => {
+            let mut query = state.world.query_one::<(&mut components::Position,)>(state.player).unwrap();
+            let (pos,) = query.get().unwrap();
+            pos.0.x += 1;
+        }
+    }
     systems::gravity(state);
 }

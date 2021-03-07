@@ -3,6 +3,7 @@ use bracket_terminal::prelude::*;
 use sevendrl_2021::bracket_views::{Input, View};
 use sevendrl_2021::game::{GameState, tick};
 use sevendrl_2021::game::components::{Position, Renderable};
+use sevendrl_2021::game::actions::Action;
 use crate::input::{Key, InputImpl};
 use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
@@ -66,24 +67,24 @@ impl GameView {
     }
 
     fn handle_input(&mut self, state: &mut UiState, input: &InputImpl) -> Option<UiStateAction> {
-        let mut game_change = false;
+        let mut player_action = None;
         if input.is_pressed(Key::DoNothing) {
-            game_change = true;
+            player_action = Some(Action::DoNothing);
         }
         if input.is_pressed(Key::MoveLeft) {
-            game_change = true;
+            player_action = Some(Action::MoveLeft);
         }
         if input.is_pressed(Key::MoveRight) {
-            game_change = true;
+            player_action = Some(Action::MoveRight);
         }
 
         if input.is_pressed(Key::Quit) {
             return Some(UiStateAction::SaveAndMainMenu)
         }
 
-        if game_change {
+        if let Some(action) = player_action {
             if let Some(game_state) = &mut state.game_state {
-                tick(game_state);
+                tick(game_state, action);
             }
         }
 
