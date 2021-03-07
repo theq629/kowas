@@ -4,6 +4,7 @@ use sevendrl_2021::bracket_views::{Input, View};
 use sevendrl_2021::game::{GameState, tick};
 use sevendrl_2021::game::components::Position;
 use sevendrl_2021::game::actions::Action;
+use sevendrl_2021::game::directions::Direction;
 use crate::input::{Key, InputImpl};
 use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
@@ -57,10 +58,10 @@ impl GameView {
             player_action = Some(Action::DoNothing);
         }
         if input.is_pressed(Key::MoveLeft) {
-            player_action = Some(Action::MoveLeft);
+            player_action = Some(Action::Move(Direction::Left));
         }
         if input.is_pressed(Key::MoveRight) {
-            player_action = Some(Action::MoveRight);
+            player_action = Some(Action::Move(Direction::Right));
         }
 
         if input.is_pressed(Key::Quit) {

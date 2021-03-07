@@ -13,7 +13,6 @@ pub use state::GameState;
 use crate::tilemap::TileMap;
 use stuff::Stuff;
 use actions::Action;
-use directions::Direction;
 
 fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Stuff> {
     let mut terrain = TileMap::new(dim, |_| Stuff::Air);
@@ -60,14 +59,9 @@ pub fn new_game() -> GameState {
 pub fn tick(state: &mut GameState, player_action: Action) {
     match player_action {
         Action::DoNothing => {},
-        Action::MoveLeft => {
+        Action::Move(dir) => {
             if let Some(player) = state.player {
-                systems::move_entity(player, Direction::Left, state);
-            }
-        },
-        Action::MoveRight => {
-            if let Some(player) = state.player {
-                systems::move_entity(player, Direction::Right, state);
+                systems::move_entity(player, dir, state);
             }
         }
     }
