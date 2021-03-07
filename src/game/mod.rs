@@ -1,4 +1,4 @@
-pub mod stuff;
+pub mod terrain;
 pub mod graphics;
 pub mod components;
 pub mod directions;
@@ -19,11 +19,11 @@ use mapgen::gen_map;
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
-    let stuff = gen_map(dim, &mut rng);
+    let terrain = gen_map(dim, &mut rng);
 
     let mut state = GameState {
         world: World::new(),
-        stuff: stuff,
+        terrain: terrain,
         player: None
     };
 
@@ -43,11 +43,10 @@ pub fn tick(state: &mut GameState, player_action: Action) {
                 result_error(systems::move_entity(player, dir, state));
             }
         },
-        Action::Get(dir) => {
+        Action::Get => {
             if let Some(player) = state.player {
-                result_error(systems::get(player, dir, state));
+                result_error(systems::get(player, state));
             }
         },
     }
-    systems::apply_gravity(state);
 }

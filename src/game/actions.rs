@@ -5,5 +5,5 @@ use crate::game::directions::Direction;
 pub enum Action {
     DoNothing,
     Move(Direction),
-    Get(Direction)
+    Get
 }

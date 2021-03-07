@@ -2,12 +2,12 @@ use std::io::{Read, Write};
 use serde::{Serialize, Deserialize, Serializer, Deserializer};
 use hecs::{World, Entity};
 use crate::tilemap::TileMap;
-use super::stuff::Stuff;
+use super::terrain::Terrain;
 use super::components::ComponentSerializationContext;
 
 pub struct GameState {
     pub world: World,
-    pub stuff: TileMap<Stuff>,
+    pub terrain: TileMap<Terrain>,
     pub player: Option<Entity>
 }
 
@@ -22,14 +22,14 @@ struct LoadWorld {
 #[derive(Serialize)]
 struct SaveGameState<'a> {
     pub world: SaveWorld<'a>,
-    pub stuff: &'a TileMap<Stuff>,
+    pub terrain: &'a TileMap<Terrain>,
     pub player: Option<Entity>
 }
 
 #[derive(Deserialize)]
 struct LoadGameState {
     pub world: LoadWorld,
-    pub stuff: TileMap<Stuff>,
+    pub terrain: TileMap<Terrain>,
     pub player: Option<Entity>
 }
 
@@ -61,7 +61,7 @@ impl <'a> SaveGameState<'a> {
     fn new(state: &'a GameState) -> Self {
         Self {
             world: SaveWorld { world: &state.world },
-            stuff: &state.stuff,
+            terrain: &state.terrain,
             player: state.player
         }
     }
@@ -71,7 +71,7 @@ impl LoadGameState {
     fn to_game_state(self) -> GameState {
         GameState {
             world: self.world.world,
-            stuff: self.stuff,
+            terrain: self.terrain,
             player: self.player
         }
     }

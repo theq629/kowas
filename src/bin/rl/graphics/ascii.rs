@@ -5,19 +5,15 @@ use super::BracketGraphic;
 
 pub fn make_ascii() -> EnumMap<Graphic, BracketGraphic> {
     enum_map! {
-        Graphic::Body => BracketGraphic {
+        Graphic::Player => BracketGraphic {
             glyph: to_cp437('@'),
             colour: RGB::named(BLUE)
         },
-        Graphic::Empty => BracketGraphic {
-            glyph: to_cp437('.'),
-            colour: RGB::named(LIGHT_GREY)
-        },
-        Graphic::Water => BracketGraphic {
-            glyph: to_cp437('~'),
-            colour: RGB::named(BLUE)
-        },
         Graphic::Floor => BracketGraphic {
+            glyph: to_cp437('.'),
+            colour: RGB::named(LIGHTGREY)
+        },
+        Graphic::Wall => BracketGraphic {
             glyph: to_cp437('#'),
             colour: RGB::named(GREY)
         },

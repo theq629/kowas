@@ -3,27 +3,27 @@ use bracket_geometry::prelude::Point;
 
 #[derive(Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Direction {
-    Up,
-    Down,
-    Right,
-    Left,
-    UpRight,
-    UpLeft,
-    DownRight,
-    DownLeft
+    N,
+    S,
+    E,
+    W,
+    NE,
+    NW,
+    SE,
+    SW
 }
 
 impl Direction {
     pub fn to_point(&self) -> Point{
         match self {
-            Direction::Up => Point::new(0, -1),
-            Direction::Down => Point::new(0, 1),
-            Direction::Right => Point::new(1, 0),
-            Direction::Left => Point::new(-1, 0),
-            Direction::UpRight => Point::new(1, -1),
-            Direction::UpLeft => Point::new(-1, -1),
-            Direction::DownRight => Point::new(1, 1),
-            Direction::DownLeft => Point::new(-1, 1)
+            Direction::N => Point::new(0, -1),
+            Direction::S => Point::new(0, 1),
+            Direction::E => Point::new(1, 0),
+            Direction::W => Point::new(-1, 0),
+            Direction::NE => Point::new(1, -1),
+            Direction::NW => Point::new(-1, -1),
+            Direction::SE => Point::new(1, 1),
+            Direction::SW => Point::new(-1, 1)
         }
     }
 }

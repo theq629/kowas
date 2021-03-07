@@ -1,8 +1,14 @@
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Key {
     DoNothing,
-    MoveLeft,
-    MoveRight,
+    MoveN,
+    MoveS,
+    MoveE,
+    MoveW,
+    MoveNE,
+    MoveNW,
+    MoveSE,
+    MoveSW,
     Get,
     Quit
 }

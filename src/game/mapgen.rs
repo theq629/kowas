@@ -2,7 +2,7 @@ use std::cmp::min;
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 use crate::tilemap::TileMap;
-use crate::game::stuff::Stuff;
+use crate::game::terrain::Terrain;
 
 #[derive(Clone)]
 struct Gap {
@@ -65,8 +65,8 @@ fn choose_gaps(platforms: &mut Vec<Platform>, dim: &Point, rng: &mut RandomNumbe
     }
 }
 
-fn draw_platforms(dim: &Point, platforms: &mut Vec<Platform>) -> TileMap<Stuff> {
-    let mut stuff = TileMap::new(*dim, |_| Stuff::Air);
+fn draw_platforms(dim: &Point, platforms: &mut Vec<Platform>) -> TileMap<Terrain> {
+    let mut terrain = TileMap::new(*dim, |_| Terrain::Floor);
 
     for platform in platforms.iter_mut() {
         platform.gaps.push(Gap {
@@ -78,17 +78,17 @@ fn draw_platforms(dim: &Point, platforms: &mut Vec<Platform>) -> TileMap<Stuff> 
         for gap in platform.gaps.iter() {
             for x in start_x..gap.start_x {
                 for y in platform.start_y..(platform.start_y + platform.thickness) {
-                    stuff[Point::new(x, y)] = Stuff::Floor;
+                    terrain[Point::new(x, y)] = Terrain::Wall;
                 }
             }
             start_x = gap.start_x + gap.width;
         }
     }
 
-    stuff
+    terrain
 }
 
-pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Stuff> {
+pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Terrain> {
     let mut platforms = choose_platforms(&dim, rng);
     choose_gaps(&mut platforms, &dim, rng);
     draw_platforms(&dim, &mut platforms)
