@@ -1,20 +1,22 @@
-pub mod terrain;
+pub mod stuff;
 pub mod graphics;
 pub mod components;
+pub mod directions;
 pub mod actions;
 mod systems;
 mod state;
 
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-use hecs::World;
+use hecs::{World, Entity};
 pub use state::GameState;
 use crate::tilemap::TileMap;
-use terrain::Terrain;
+use stuff::Stuff;
 use actions::Action;
+use directions::Direction;
 
-fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Terrain> {
-    let mut terrain = TileMap::new(dim, |_| Terrain::Empty);
+fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Stuff> {
+    let mut terrain = TileMap::new(dim, |_| Stuff::Air);
 
     let mut y = 0;
     loop {
@@ -24,45 +26,50 @@ fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Terrain>
         }
         for x in 0..dim.x {
             if rng.range(0, 10) < 7 {
-                terrain[Point::new(x, y)] = Terrain::Floor;
+                terrain[Point::new(x, y)] = Stuff::Floor;
             }
         }
     }
     terrain
 }
 
-pub fn new_game() -> GameState {
-    let mut world = World::new();
+pub fn make_player(pos: Point, state: &mut GameState) -> Entity {
+    state.stuff[pos] = Stuff::Body;
+    state.world.spawn((
+        components::Position(pos),
+    ))
+}
 
+pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
-    let terrain = make_terrain(dim, &mut rng);
+    let stuff = make_terrain(dim, &mut rng);
 
-    let player = world.spawn((
-        components::Position(Point::new(dim.x / 2, 1)),
-        components::Renderable(graphics::Graphic::Player)
-    ));
+    let mut state = GameState {
+        world: World::new(),
+        stuff: stuff,
+        player: None
+    };
 
-    GameState {
-        world,
-        terrain,
-        player
-    }
+    let player = make_player(Point::new(dim.x / 2, 1), &mut state);
+    state.player = Some(player);
+
+    state
 }
 
 pub fn tick(state: &mut GameState, player_action: Action) {
     match player_action {
         Action::DoNothing => {},
         Action::MoveLeft => {
-            let mut query = state.world.query_one::<(&mut components::Position,)>(state.player).unwrap();
-            let (pos,) = query.get().unwrap();
-            pos.0.x -= 1;
+            if let Some(player) = state.player {
+                systems::move_entity(player, Direction::Left, state);
+            }
         },
         Action::MoveRight => {
-            let mut query = state.world.query_one::<(&mut components::Position,)>(state.player).unwrap();
-            let (pos,) = query.get().unwrap();
-            pos.0.x += 1;
+            if let Some(player) = state.player {
+                systems::move_entity(player, Direction::Right, state);
+            }
         }
     }
-    systems::gravity(state);
+    systems::apply_gravity(state);
 }
