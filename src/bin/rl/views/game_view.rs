@@ -63,6 +63,9 @@ impl GameView {
         if input.is_pressed(Key::MoveRight) {
             player_action = Some(Action::Move(Direction::Right));
         }
+        if input.is_pressed(Key::Get) {
+            player_action = Some(Action::Get(Direction::Right));
+        }
 
         if input.is_pressed(Key::Quit) {
             return Some(UiStateAction::SaveAndMainMenu)

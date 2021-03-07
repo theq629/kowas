@@ -4,23 +4,17 @@ pub mod components;
 pub mod directions;
 pub mod actions;
 mod mapgen;
+mod things;
 mod systems;
 mod state;
 
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-use hecs::{World, Entity};
+use hecs::World;
+use crate::log_err::result_error;
 pub use state::GameState;
-use stuff::Stuff;
 use actions::Action;
 use mapgen::gen_map;
-
-pub fn make_player(pos: Point, state: &mut GameState) -> Entity {
-    state.stuff[pos] = Stuff::Body;
-    state.world.spawn((
-        components::Position(pos),
-    ))
-}
 
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
@@ -33,7 +27,9 @@ pub fn new_game() -> GameState {
         player: None
     };
 
-    let player = make_player(Point::new(dim.x / 2, 1), &mut state);
+    things::water_potion(Point::new(dim.x / 2 + 1, 1), &mut state);
+
+    let player = things::player(Point::new(dim.x / 2, 1), &mut state);
     state.player = Some(player);
 
     state
@@ -44,9 +40,14 @@ pub fn tick(state: &mut GameState, player_action: Action) {
         Action::DoNothing => {},
         Action::Move(dir) => {
             if let Some(player) = state.player {
-                systems::move_entity(player, dir, state);
+                result_error(systems::move_entity(player, dir, state));
             }
-        }
+        },
+        Action::Get(dir) => {
+            if let Some(player) = state.player {
+                result_error(systems::get(player, dir, state));
+            }
+        },
     }
     systems::apply_gravity(state);
 }

@@ -13,6 +13,9 @@ pub fn make_default_key_bindings() -> KeyBindings {
     bindings.bind(VirtualKeyCode::Numpad4, Key::MoveLeft);
     bindings.bind(VirtualKeyCode::Numpad6, Key::MoveRight);
 
+    bindings.bind(VirtualKeyCode::G, Key::Get);
+    bindings.bind(VirtualKeyCode::Comma, Key::Get);
+
     bindings.bind(VirtualKeyCode::Z, Key::DoNothing);
     bindings.bind(VirtualKeyCode::Period, Key::DoNothing);
 

@@ -3,5 +3,6 @@ pub enum Key {
     DoNothing,
     MoveLeft,
     MoveRight,
+    Get,
     Quit
 }

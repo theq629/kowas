@@ -1357,6 +1357,7 @@ dependencies = [
  "bracket-terminal",
  "enum-map",
  "hecs",
+ "log",
  "serde",
  "serde_cbor",
  "textwrap",
