@@ -3,6 +3,7 @@ pub mod graphics;
 pub mod components;
 pub mod directions;
 pub mod actions;
+mod mapgen;
 mod systems;
 mod state;
 
@@ -10,27 +11,9 @@ use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 use hecs::{World, Entity};
 pub use state::GameState;
-use crate::tilemap::TileMap;
 use stuff::Stuff;
 use actions::Action;
-
-fn make_terrain(dim: Point, rng: &mut RandomNumberGenerator) -> TileMap<Stuff> {
-    let mut terrain = TileMap::new(dim, |_| Stuff::Air);
-
-    let mut y = 0;
-    loop {
-        y += rng.range(2, 8);
-        if y >= dim.y {
-            break;
-        }
-        for x in 0..dim.x {
-            if rng.range(0, 10) < 7 {
-                terrain[Point::new(x, y)] = Stuff::Floor;
-            }
-        }
-    }
-    terrain
-}
+use mapgen::gen_map;
 
 pub fn make_player(pos: Point, state: &mut GameState) -> Entity {
     state.stuff[pos] = Stuff::Body;
@@ -42,7 +25,7 @@ pub fn make_player(pos: Point, state: &mut GameState) -> Entity {
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
-    let stuff = make_terrain(dim, &mut rng);
+    let stuff = gen_map(dim, &mut rng);
 
     let mut state = GameState {
         world: World::new(),
