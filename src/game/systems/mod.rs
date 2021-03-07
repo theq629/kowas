@@ -1,7 +1,7 @@
 mod change;
 mod movement;
-mod getting;
+mod getdrop;
 
 pub use change::ChangeOk;
 pub use movement::move_entity;
-pub use getting::get;
+pub use getdrop::{get, drop};

@@ -48,5 +48,10 @@ pub fn tick(state: &mut GameState, player_action: Action) {
                 result_error(systems::get(player, state));
             }
         },
+        Action::Drop(entity) => {
+            if let Some(player) = state.player {
+                result_error(systems::drop(player, entity, state));
+            }
+        },
     }
 }

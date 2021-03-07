@@ -1,4 +1,4 @@
-use hecs::ComponentError;
+use hecs::{ComponentError, NoSuchEntity};
 
 #[derive(Debug)]
 pub struct ChangeOk;
@@ -10,6 +10,12 @@ pub type ChangeResult = Result<ChangeOk, ChangeErr>;
 
 impl From<ComponentError> for ChangeErr {
     fn from(_: ComponentError) -> Self {
+        ChangeErr
+    }
+}
+
+impl From<NoSuchEntity> for ChangeErr {
+    fn from(_: NoSuchEntity) -> Self {
         ChangeErr
     }
 }
