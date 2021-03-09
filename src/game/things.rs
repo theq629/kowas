@@ -8,14 +8,23 @@ pub fn player(pos: Point, state: &mut GameState) -> Entity {
     state.world.spawn((
         components::Position(pos),
         components::Renderable(Graphic::Player),
+        components::Health(20),
         components::Inventory(Vec::new())
     ))
 }
 
-pub fn water_potion(pos: Point, state: &mut GameState) -> Entity {
+pub fn goblin(pos: Point, state: &mut GameState) -> Entity {
     state.world.spawn((
         components::Position(pos),
-        components::Renderable(Graphic::Bomb),
-        components::Bomb
+        components::Renderable(Graphic::Goblin),
+        components::Health(10)
+    ))
+}
+
+pub fn orc(pos: Point, state: &mut GameState) -> Entity {
+    state.world.spawn((
+        components::Position(pos),
+        components::Renderable(Graphic::Orc),
+        components::Health(10)
     ))
 }

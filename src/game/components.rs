@@ -14,11 +14,15 @@ pub struct Renderable(pub Graphic);
 pub struct Bomb;
 
 #[derive(Clone, Serialize, Deserialize)]
+pub struct Health(pub u32);
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Inventory(pub Vec<Entity>);
 
 serialize_components!(
     Position,
     Renderable,
     Bomb,
+    Health,
     Inventory
 );

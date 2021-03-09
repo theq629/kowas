@@ -17,8 +17,12 @@ pub fn make_ascii() -> EnumMap<Graphic, BracketGraphic> {
             glyph: to_cp437('#'),
             colour: RGB::named(GREY)
         },
-        Graphic::Bomb => BracketGraphic {
-            glyph: to_cp437('!'),
+        Graphic::Goblin => BracketGraphic {
+            glyph: to_cp437('g'),
+            colour: RGB::named(GREY)
+        },
+        Graphic::Orc => BracketGraphic {
+            glyph: to_cp437('o'),
             colour: RGB::named(GREY)
         }
     }

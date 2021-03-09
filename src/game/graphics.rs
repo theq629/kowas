@@ -6,5 +6,6 @@ pub enum Graphic {
     Player,
     Floor,
     Wall,
-    Bomb
+    Goblin,
+    Orc
 }
