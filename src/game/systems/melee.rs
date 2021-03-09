@@ -7,7 +7,6 @@ use super::change::{ChangeResult, ChangeOk, ChangeErr};
 fn melee_attack(_attacker: Entity, attackee: Entity, state: &mut GameState) -> ChangeResult {
     let mut attackee_health = state.world.get_mut::<Health>(attackee)?;
     attackee_health.value -= 1;
-    println!("melee attack! {}", attackee_health.value); // TODO
     Ok(ChangeOk)
 }
 
