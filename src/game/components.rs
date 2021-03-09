@@ -11,16 +11,16 @@ pub struct Position(pub Point);
 pub struct Renderable(pub Graphic);
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Bomb;
+pub struct Blocks;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Health {
-    pub value: u32,
-    pub max: u32
+    pub value: i32,
+    pub max: i32
 }
 
 impl Health {
-    pub fn new(max: u32) -> Self {
+    pub fn new(max: i32) -> Self {
         Self {
             value: max,
             max: max
@@ -34,7 +34,7 @@ pub struct Inventory(pub Vec<Entity>);
 serialize_components!(
     Position,
     Renderable,
-    Bomb,
+    Blocks,
     Health,
     Inventory
 );

@@ -6,6 +6,7 @@ use crate::game::directions::Direction;
 pub enum Action {
     DoNothing,
     Move(Direction),
+    MeleeAttack(Direction),
     Get,
     Drop(Entity)
 }

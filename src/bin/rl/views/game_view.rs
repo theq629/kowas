@@ -1,7 +1,9 @@
 use std::cmp::{max, min};
 use bracket_terminal::prelude::*;
+use hecs::Entity;
+use sevendrl_2021::log_err::result_error;
 use sevendrl_2021::bracket_views::{Input, View};
-use sevendrl_2021::game::{GameState, tick};
+use sevendrl_2021::game::{GameState, act};
 use sevendrl_2021::game::components;
 use sevendrl_2021::game::components::{Position, Renderable};
 use sevendrl_2021::game::actions::Action;
@@ -76,49 +78,56 @@ impl GameView {
         }
     }
 
-    fn handle_input(&mut self, state: &mut UiState, input: &InputImpl) -> Option<UiStateAction> {
-        let mut player_action = None;
+    fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
         if input.is_pressed(Key::DoNothing) {
-            player_action = Some(Action::DoNothing);
+            result_error(act(player, Action::DoNothing, game_state));
         }
 
+        fn move_or_attack(player: Entity, dir: Direction, game_state: &mut GameState) {
+            let res = act(player, Action::MeleeAttack(dir), game_state).or_else(|_| {
+                act(player, Action::Move(dir), game_state)
+            });
+            result_error(res);
+        }
         if input.is_pressed(Key::MoveN) {
-            player_action = Some(Action::Move(Direction::N));
+            move_or_attack(player, Direction::N, game_state);
         }
         if input.is_pressed(Key::MoveS) {
-            player_action = Some(Action::Move(Direction::S));
+            move_or_attack(player, Direction::S, game_state);
         }
         if input.is_pressed(Key::MoveE) {
-            player_action = Some(Action::Move(Direction::E));
+            move_or_attack(player, Direction::E, game_state);
         }
         if input.is_pressed(Key::MoveW) {
-            player_action = Some(Action::Move(Direction::W));
+            move_or_attack(player, Direction::W, game_state);
         }
         if input.is_pressed(Key::MoveNE) {
-            player_action = Some(Action::Move(Direction::NE));
+            move_or_attack(player, Direction::NE, game_state);
         }
         if input.is_pressed(Key::MoveNW) {
-            player_action = Some(Action::Move(Direction::NW));
+            move_or_attack(player, Direction::NW, game_state);
         }
         if input.is_pressed(Key::MoveSE) {
-            player_action = Some(Action::Move(Direction::SE));
+            move_or_attack(player, Direction::SE, game_state);
         }
         if input.is_pressed(Key::MoveSW) {
-            player_action = Some(Action::Move(Direction::SW));
+            move_or_attack(player, Direction::SW, game_state);
         }
 
         if input.is_pressed(Key::Get) {
-            player_action = Some(Action::Get);
+            result_error(act(player, Action::Get, game_state));
+        }
+    }
+
+    fn handle_input(&mut self, state: &mut UiState, input: &InputImpl) -> Option<UiStateAction> {
+        if let Some(game_state) = &mut state.game_state {
+            if let Some(player) = game_state.player {
+                self.handle_action_input(player, game_state, input);
+            }
         }
 
         if input.is_pressed(Key::Quit) {
             return Some(UiStateAction::SaveAndMainMenu)
-        }
-
-        if let Some(action) = player_action {
-            if let Some(game_state) = &mut state.game_state {
-                tick(game_state, action);
-            }
         }
 
         None

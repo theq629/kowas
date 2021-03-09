@@ -8,12 +8,13 @@ mod things;
 mod systems;
 mod state;
 
+use hecs::Entity;
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-use crate::log_err::result_error;
 pub use state::GameState;
 use actions::Action;
 use mapgen::gen_map;
+use systems::ChangeResult;
 
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
@@ -21,23 +22,22 @@ pub fn new_game() -> GameState {
     gen_map(dim, &mut rng)
 }
 
-pub fn tick(state: &mut GameState, player_action: Action) {
-    match player_action {
-        Action::DoNothing => {},
+pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
+    match action {
+        Action::DoNothing => {
+            systems::do_nothing(actor)
+        },
         Action::Move(dir) => {
-            if let Some(player) = state.player {
-                result_error(systems::move_entity(player, dir, state));
-            }
+            systems::move_entity(actor, dir, state)
+        },
+        Action::MeleeAttack(dir) => {
+            systems::melee_attack_toward(actor, dir, state)
         },
         Action::Get => {
-            if let Some(player) = state.player {
-                result_error(systems::get(player, state));
-            }
+            systems::get(actor, state)
         },
         Action::Drop(entity) => {
-            if let Some(player) = state.player {
-                result_error(systems::drop(player, entity, state));
-            }
+            systems::drop(actor, entity, state)
         },
     }
 }
