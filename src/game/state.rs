@@ -1,4 +1,5 @@
 use std::io::{Read, Write};
+use bracket_random::prelude::RandomNumberGenerator;
 use serde::{Serialize, Deserialize, Serializer, Deserializer};
 use hecs::{World, Entity};
 use crate::tilemap::TileMap;
@@ -10,7 +11,8 @@ pub struct GameState {
     pub world: World,
     pub terrain: TileMap<Terrain>,
     pub liquids: TileMap<Option<Liquid>>,
-    pub player: Option<Entity>
+    pub player: Option<Entity>,
+    pub rng: RandomNumberGenerator
 }
 
 struct SaveWorld<'a> {
@@ -26,7 +28,8 @@ struct SaveGameState<'a> {
     pub world: SaveWorld<'a>,
     pub terrain: &'a TileMap<Terrain>,
     pub liquids: &'a TileMap<Option<Liquid>>,
-    pub player: Option<Entity>
+    pub player: Option<Entity>,
+    pub rng: &'a RandomNumberGenerator
 }
 
 #[derive(Deserialize)]
@@ -34,7 +37,8 @@ struct LoadGameState {
     pub world: LoadWorld,
     pub terrain: TileMap<Terrain>,
     pub liquids: TileMap<Option<Liquid>>,
-    pub player: Option<Entity>
+    pub player: Option<Entity>,
+    pub rng: RandomNumberGenerator
 }
 
 impl GameState {
@@ -67,7 +71,8 @@ impl <'a> SaveGameState<'a> {
             world: SaveWorld { world: &state.world },
             terrain: &state.terrain,
             liquids: &state.liquids,
-            player: state.player
+            player: state.player,
+            rng: &state.rng
         }
     }
 }
@@ -78,7 +83,8 @@ impl LoadGameState {
             world: self.world.world,
             terrain: self.terrain,
             liquids: self.liquids,
-            player: self.player
+            player: self.player,
+            rng: self.rng
         }
     }
 }

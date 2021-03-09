@@ -1,3 +1,4 @@
+use bracket_geometry::prelude::Point;
 use hecs::Entity;
 use crate::log_err::result_error;
 use crate::game::state::GameState;
@@ -8,6 +9,13 @@ use super::change::{ChangeResult, ChangeOk};
 fn die(dier: Entity, state: &mut GameState) -> ChangeResult {
     {
         let pos = state.world.get::<Position>(dier)?;
+        for x in (pos.0.x - 1)..(pos.0.x + 2) {
+            for y in (pos.0.y - 1)..(pos.0.y + 2) {
+                if state.rng.range(0, 10) < 7 {
+                    state.liquids[Point::new(x, y)] = Some(Liquid::Blood);
+                }
+            }
+        }
         state.liquids[pos.0] = Some(Liquid::Gore);
     }
     state.world.despawn(dier)?;

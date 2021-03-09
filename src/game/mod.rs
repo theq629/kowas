@@ -25,7 +25,8 @@ pub fn new_game() -> GameState {
         world: gened.world,
         terrain: gened.terrain,
         liquids: gened.liquids,
-        player: gened.player
+        player: gened.player,
+        rng: rng
     }
 }
 
