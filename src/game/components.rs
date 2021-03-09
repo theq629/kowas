@@ -14,7 +14,19 @@ pub struct Renderable(pub Graphic);
 pub struct Bomb;
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Health(pub u32);
+pub struct Health {
+    pub value: u32,
+    pub max: u32
+}
+
+impl Health {
+    pub fn new(max: u32) -> Self {
+        Self {
+            value: max,
+            max: max
+        }
+    }
+}
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Inventory(pub Vec<Entity>);
