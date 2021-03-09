@@ -107,10 +107,6 @@ impl <S, A> DialogView<S, A> {
 
 impl <S, K, I: Input<K>, A> View<S, K, I, A> for DialogView<S, A> {
     fn tick(&mut self, state: &mut S, _input: &I, ctx: &mut BTerm) -> Option<A> {
-        ctx.set_active_console(0);
-        ctx.cls();
-
-        ctx.set_active_console(1);
         ctx.cls();
         let hover_choice_i = self.draw(ctx);
 

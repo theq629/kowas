@@ -113,7 +113,6 @@ impl GameView {
 
 impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
     fn tick(&mut self, state: &mut UiState, input: &InputImpl, ctx: &mut BTerm) -> Option<UiStateAction> {
-        ctx.set_active_console(0);
         ctx.cls();
         if let Some(game_state) = &state.game_state {
             if let Some(player) = game_state.player {
@@ -123,8 +122,6 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
                 self.draw(view_centre, game_state, &state.graphics, ctx);
             }
         }
-        ctx.set_active_console(1);
-        ctx.cls();
         self.handle_input(state, input)
     }
 }
