@@ -8,9 +8,11 @@ use crate::game::things;
 
 pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GameState {
     let terrain = TileMap::new(dim, |_| Terrain::Floor);
+    let liquids = TileMap::new(dim, |_| None);
     let mut state = GameState {
         world: World::new(),
         terrain: terrain,
+        liquids: liquids,
         player: None
     };
 

@@ -3,11 +3,13 @@ use serde::{Serialize, Deserialize, Serializer, Deserializer};
 use hecs::{World, Entity};
 use crate::tilemap::TileMap;
 use super::terrain::Terrain;
+use super::liquids::Liquid;
 use super::components::ComponentSerializationContext;
 
 pub struct GameState {
     pub world: World,
     pub terrain: TileMap<Terrain>,
+    pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>
 }
 
@@ -23,6 +25,7 @@ struct LoadWorld {
 struct SaveGameState<'a> {
     pub world: SaveWorld<'a>,
     pub terrain: &'a TileMap<Terrain>,
+    pub liquids: &'a TileMap<Option<Liquid>>,
     pub player: Option<Entity>
 }
 
@@ -30,6 +33,7 @@ struct SaveGameState<'a> {
 struct LoadGameState {
     pub world: LoadWorld,
     pub terrain: TileMap<Terrain>,
+    pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>
 }
 
@@ -62,6 +66,7 @@ impl <'a> SaveGameState<'a> {
         Self {
             world: SaveWorld { world: &state.world },
             terrain: &state.terrain,
+            liquids: &state.liquids,
             player: state.player
         }
     }
@@ -72,6 +77,7 @@ impl LoadGameState {
         GameState {
             world: self.world.world,
             terrain: self.terrain,
+            liquids: self.liquids,
             player: self.player
         }
     }

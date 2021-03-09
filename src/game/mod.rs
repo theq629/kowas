@@ -1,4 +1,5 @@
 pub mod terrain;
+pub mod liquids;
 pub mod graphics;
 pub mod components;
 pub mod directions;
@@ -22,7 +23,7 @@ pub fn new_game() -> GameState {
     gen_map(dim, &mut rng)
 }
 
-pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
+fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
     match action {
         Action::DoNothing => {
             systems::do_nothing(actor)
@@ -40,4 +41,16 @@ pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult
             systems::drop(actor, entity, state)
         },
     }
+}
+
+pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
+    dispatch_action(actor, action, state).and_then(|ok| {
+        systems::check_deaths(state);
+        if let Some(player) = state.player {
+            if !state.world.contains(player) {
+                state.player = None;
+            }
+        }
+        Ok(ok)
+    })
 }

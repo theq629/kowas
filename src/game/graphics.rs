@@ -6,6 +6,7 @@ pub enum Graphic {
     Player,
     Floor,
     Wall,
+    Gore,
     Goblin,
     Orc
 }

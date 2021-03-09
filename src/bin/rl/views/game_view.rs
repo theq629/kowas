@@ -4,8 +4,9 @@ use hecs::Entity;
 use sevendrl_2021::log_err::result_error;
 use sevendrl_2021::bracket_views::{Input, View};
 use sevendrl_2021::game::{GameState, act};
-use sevendrl_2021::game::components;
-use sevendrl_2021::game::components::{Position, Renderable};
+use sevendrl_2021::game::graphics::Graphic;
+use sevendrl_2021::game::liquids::Liquid;
+use sevendrl_2021::game::components::{Position, Renderable, Health};
 use sevendrl_2021::game::actions::Action;
 use sevendrl_2021::game::directions::Direction;
 use crate::input::{Key, InputImpl};
@@ -27,6 +28,7 @@ impl GameView {
 impl GameView {
     fn draw_map(&mut self, view_centre: Point, game_state: &GameState, graphics: &GraphicLookup, ctx: &mut BTerm) {
         let terrain = &game_state.terrain;
+        let liquids = &game_state.liquids;
 
         let screen_dim = Point::from_tuple(ctx.get_char_size());
         let world_min = Point::new(
@@ -47,7 +49,16 @@ impl GameView {
             let mut screen_x = screen_min.x;
             for world_x in world_min.x..world_max.x {
                 let pos = Point::new(world_x, world_y);
-                let graphic = &graphics[terrain[pos].graphic()];
+                let ter = terrain[pos];
+                let graphic = match liquids[pos] {
+                    None => graphics[ter.graphic()].clone(),
+                    Some(Liquid::Gore) => graphics[Graphic::Gore].clone(),
+                    Some(Liquid::Blood) => {
+                        let mut g = graphics[ter.graphic()].clone();
+                        g.colour = RGB::named(RED);
+                        g
+                    }
+                };
                 ctx.set(screen_x, screen_y, graphic.colour, self.bg_col, graphic.glyph);
                 screen_x += 1;
             }
@@ -73,7 +84,7 @@ impl GameView {
         ctx.fill_region(Rect::with_size(0, dim_y - 1, dim_x, 1), to_cp437(' '), RGB::named(BLACK), bg);
 
         if let Some(player) = game_state.player {
-            let health = game_state.world.get::<components::Health>(player).unwrap();
+            let health = game_state.world.get::<Health>(player).unwrap();
             ctx.print_color(0, dim_y - 1, RGB::named(BLACK), bg, format!("HEALTH {}/{}", health.value, health.max));
         }
     }
