@@ -20,7 +20,13 @@ use systems::ChangeResult;
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
-    gen_map(dim, &mut rng)
+    let gened = gen_map(dim, &mut rng);
+    GameState {
+        world: gened.world,
+        terrain: gened.terrain,
+        liquids: gened.liquids,
+        player: gened.player
+    }
 }
 
 fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
