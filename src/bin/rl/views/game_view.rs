@@ -13,14 +13,21 @@ use crate::input::{Key, InputImpl};
 use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
 
+enum InputMode {
+    Move,
+    Shove
+}
+
 pub struct GameView {
-    bg_col: RGB
+    bg_col: RGB,
+    input_mode: InputMode
 }
 
 impl GameView {
     pub fn new() -> Self {
         GameView {
-            bg_col: RGB::named(BLACK)
+            bg_col: RGB::named(BLACK),
+            input_mode: InputMode::Move
         }
     }
 }
@@ -83,23 +90,27 @@ impl GameView {
 
         ctx.fill_region(Rect::with_size(0, dim_y - 1, dim_x, 1), to_cp437(' '), RGB::named(BLACK), bg);
 
-        if let Some(player) = game_state.player {
-            let health = game_state.world.get::<Health>(player).unwrap();
-            ctx.print_color(0, dim_y - 1, RGB::named(BLACK), bg, format!("HEALTH {}/{}", health.value, health.max));
+        match self.input_mode {
+            InputMode::Move => {
+                if let Some(player) = game_state.player {
+                    let health = game_state.world.get::<Health>(player).unwrap();
+                    ctx.print_color(0, dim_y - 1, RGB::named(BLACK), bg, format!("HEALTH {}/{}", health.value, health.max));
+                }
+            },
+            InputMode::Shove => {
+                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction");
+            }
         }
     }
 
-    fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
-        if input.is_pressed(Key::DoNothing) {
-            result_error(act(player, Action::DoNothing, game_state));
-        }
-
+    fn handle_move_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
         fn move_or_attack(player: Entity, dir: Direction, game_state: &mut GameState) {
             let res = act(player, Action::MeleeAttack(dir), game_state).or_else(|_| {
                 act(player, Action::Move(dir), game_state)
             });
             result_error(res);
         }
+
         if input.is_pressed(Key::MoveN) {
             move_or_attack(player, Direction::N, game_state);
         }
@@ -124,9 +135,56 @@ impl GameView {
         if input.is_pressed(Key::MoveSW) {
             move_or_attack(player, Direction::SW, game_state);
         }
+    }
+
+    fn handle_shove_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+        fn do_shove(view: &mut GameView, player: Entity, dir: Direction, game_state: &mut GameState) {
+            view.input_mode = InputMode::Move;
+            result_error(act(player, Action::Shove(dir), game_state))
+        }
+
+        if input.is_pressed(Key::MoveN) {
+            do_shove(self, player, Direction::N, game_state);
+        }
+        if input.is_pressed(Key::MoveS) {
+            do_shove(self, player, Direction::S, game_state);
+        }
+        if input.is_pressed(Key::MoveE) {
+            do_shove(self, player, Direction::E, game_state);
+        }
+        if input.is_pressed(Key::MoveW) {
+            do_shove(self, player, Direction::W, game_state);
+        }
+        if input.is_pressed(Key::MoveNE) {
+            do_shove(self, player, Direction::NE, game_state);
+        }
+        if input.is_pressed(Key::MoveNW) {
+            do_shove(self, player, Direction::NW, game_state);
+        }
+        if input.is_pressed(Key::MoveSE) {
+            do_shove(self, player, Direction::SE, game_state);
+        }
+        if input.is_pressed(Key::MoveSW) {
+            do_shove(self, player, Direction::SW, game_state);
+        }
+    }
+
+    fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+        if input.is_pressed(Key::DoNothing) {
+            result_error(act(player, Action::DoNothing, game_state));
+        }
+
+        match self.input_mode {
+            InputMode::Move => {
+                self.handle_move_input(player, game_state, input)
+            },
+            InputMode::Shove => {
+                self.handle_shove_input(player, game_state, input)
+            }
+        }
 
         if input.is_pressed(Key::Shove) {
-            result_error(act(player, Action::Shove(Direction::N), game_state));
+            self.input_mode = InputMode::Shove;
         }
 
         if input.is_pressed(Key::Get) {
