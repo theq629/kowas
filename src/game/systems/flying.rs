@@ -38,6 +38,10 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
     let mut last_ok_pos = cur_pos;
     let mut collision = None;
     'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
+        if state.terrain[pos].is_solid() {
+            collision = Some(entity);
+            break 'posloop;
+        }
         for (entity, _) in state.world.query::<(&Position, &Blocks)>()
             .iter()
             .filter(|(e, (p, _))| *e != entity && p.0 == pos)
