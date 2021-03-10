@@ -1,4 +1,4 @@
-use bracket_geometry::prelude::Point;
+use bracket_geometry::prelude::{Point, VectorLine};
 use hecs::Entity;
 use crate::log_err::result_error;
 use crate::game::state::GameState;
@@ -32,16 +32,30 @@ pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> Ch
     Err(ChangeErr)
 }
 
-pub fn update_flying(state: &mut GameState) {
-    let mut to_defly = Vec::new();
-    for (entity, (mut pos, mut flying)) in state.world.query::<(&mut Position, &mut Flying)>().iter() {
-        pos.0 = pos.0 + flying.velocity;
-        flying.velocity = flying.velocity * 0.5;
-        if flying.velocity.x < 1 && flying.velocity.y < 1 {
-            to_defly.push(entity);
+fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState) {
+    let new_pos = cur_pos + vel;
+    let mut last_ok_pos = cur_pos;
+    'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
+        for _ in state.world.query::<(&Position, &Blocks)>().iter().filter(|(e, (p, _))| *e != entity && p.0 == pos) {
+            break 'posloop;
         }
+        last_ok_pos = pos;
     }
-    for entity in to_defly.iter() {
-        result_error(state.world.remove_one::<Flying>(*entity));
+    if let Ok(mut entity_pos) = state.world.get_mut::<Position>(entity) {
+        entity_pos.0 = last_ok_pos;
+    }
+}
+
+pub fn update_flying(state: &mut GameState) {
+    let flying: Vec<_> = state.world.query::<(&Position, &Flying)>()
+        .iter()
+        .map(|(e, (p, f))| (e, p.0, f.velocity))
+        .collect();
+    for (entity, cur_pos, vel) in flying {
+        move_flying(entity, cur_pos, vel, state);
+    }
+    let flying: Vec<_> = state.world.query::<&Flying>().iter().map(|(e, _)| e).collect();
+    for entity in flying {
+        result_error(state.world.remove_one::<Flying>(entity));
     }
 }
