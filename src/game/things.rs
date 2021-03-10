@@ -18,7 +18,7 @@ pub fn goblin(pos: Point, world: &mut World) -> Entity {
         components::Position(pos),
         components::Renderable(Graphic::Goblin),
         components::Blocks,
-        components::Health::new(5)
+        components::Health::new(1)
     ))
 }
 
@@ -27,6 +27,6 @@ pub fn orc(pos: Point, world: &mut World) -> Entity {
         components::Position(pos),
         components::Renderable(Graphic::Orc),
         components::Blocks,
-        components::Health::new(10)
+        components::Health::new(5)
     ))
 }
