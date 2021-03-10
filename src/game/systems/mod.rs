@@ -6,6 +6,7 @@ mod melee;
 mod death;
 mod flying;
 mod power;
+mod damage;
 
 pub use change::{ChangeResult, ChangeOk, ChangeErr};
 pub use do_nothing::do_nothing;

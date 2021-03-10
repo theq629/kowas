@@ -12,7 +12,10 @@ fn die(dier: Entity, state: &mut GameState) -> ChangeResult {
         for x in (pos.0.x - 1)..(pos.0.x + 2) {
             for y in (pos.0.y - 1)..(pos.0.y + 2) {
                 if state.rng.range(0, 10) < 7 {
-                    state.liquids[Point::new(x, y)] = Some(Liquid::Blood);
+                    let pos = Point::new(x, y);
+                    if state.liquids[pos] != Some(Liquid::Gore) {
+                        state.liquids[pos] = Some(Liquid::Blood);
+                    }
                 }
             }
         }

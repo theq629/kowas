@@ -5,6 +5,7 @@ use crate::game::state::GameState;
 use crate::game::directions::Direction;
 use crate::game::components::{Position, Flying, Blocks, Power};
 use super::change::{ChangeResult, ChangeOk, ChangeErr};
+use super::damage::collision_damage;
 
 fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
     let shover_power = state.world.get::<Power>(shover)?.0;
@@ -35,14 +36,23 @@ pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> Ch
 fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState) {
     let new_pos = cur_pos + vel;
     let mut last_ok_pos = cur_pos;
+    let mut collision = None;
     'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
-        for _ in state.world.query::<(&Position, &Blocks)>().iter().filter(|(e, (p, _))| *e != entity && p.0 == pos) {
+        for (entity, _) in state.world.query::<(&Position, &Blocks)>()
+            .iter()
+            .filter(|(e, (p, _))| *e != entity && p.0 == pos)
+        {
+            collision = Some(entity);
             break 'posloop;
         }
         last_ok_pos = pos;
     }
     if let Ok(mut entity_pos) = state.world.get_mut::<Position>(entity) {
         entity_pos.0 = last_ok_pos;
+    }
+    if let Some(collision) = collision {
+        let v = ((vel.x * vel.x + vel.y * vel.y) as f32).sqrt() as i32;
+        let _ = collision_damage(entity, collision, v, state);
     }
 }
 

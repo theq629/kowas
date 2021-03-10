@@ -2,13 +2,8 @@ use hecs::Entity;
 use crate::game::state::GameState;
 use crate::game::directions::Direction;
 use crate::game::components::{Position, Health};
-use super::change::{ChangeResult, ChangeOk, ChangeErr};
-
-fn melee_attack(_attacker: Entity, attackee: Entity, state: &mut GameState) -> ChangeResult {
-    let mut attackee_health = state.world.get_mut::<Health>(attackee)?;
-    attackee_health.value -= 1;
-    Ok(ChangeOk)
-}
+use super::change::{ChangeResult, ChangeErr};
+use super::damage::melee_damage;
 
 pub fn melee_attack_toward(attacker: Entity, direction: Direction, state: &mut GameState) -> ChangeResult {
     let pos = state.world.get::<Position>(attacker)?.0.clone();
@@ -21,7 +16,7 @@ pub fn melee_attack_toward(attacker: Entity, direction: Direction, state: &mut G
         .collect();
     for target in targets {
         if state.world.get::<Health>(target).is_ok() {
-            return melee_attack(attacker, target, state);
+            return melee_damage(attacker, target, state);
         }
     }
 
