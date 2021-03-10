@@ -119,101 +119,26 @@ impl GameView {
     }
 
     fn handle_move_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
-        fn move_or_attack(player: Entity, dir: Direction, game_state: &mut GameState) {
+        handle_directional_action_input(input, |dir| {
             let res = act(player, Action::MeleeAttack(dir), game_state).or_else(|_| {
                 act(player, Action::Move(dir), game_state)
             });
             result_error(res);
-        }
-
-        if input.is_pressed(Key::MoveN) {
-            move_or_attack(player, Direction::N, game_state);
-        }
-        if input.is_pressed(Key::MoveS) {
-            move_or_attack(player, Direction::S, game_state);
-        }
-        if input.is_pressed(Key::MoveE) {
-            move_or_attack(player, Direction::E, game_state);
-        }
-        if input.is_pressed(Key::MoveW) {
-            move_or_attack(player, Direction::W, game_state);
-        }
-        if input.is_pressed(Key::MoveNE) {
-            move_or_attack(player, Direction::NE, game_state);
-        }
-        if input.is_pressed(Key::MoveNW) {
-            move_or_attack(player, Direction::NW, game_state);
-        }
-        if input.is_pressed(Key::MoveSE) {
-            move_or_attack(player, Direction::SE, game_state);
-        }
-        if input.is_pressed(Key::MoveSW) {
-            move_or_attack(player, Direction::SW, game_state);
-        }
+        });
     }
 
     fn handle_shove_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
-        fn do_shove(view: &mut GameView, player: Entity, dir: Direction, game_state: &mut GameState) {
-            view.input_mode = InputMode::Move;
+        handle_directional_action_input(input, |dir| {
+            self.input_mode = InputMode::Move;
             result_error(act(player, Action::Shove(dir), game_state))
-        }
-
-        if input.is_pressed(Key::MoveN) {
-            do_shove(self, player, Direction::N, game_state);
-        }
-        if input.is_pressed(Key::MoveS) {
-            do_shove(self, player, Direction::S, game_state);
-        }
-        if input.is_pressed(Key::MoveE) {
-            do_shove(self, player, Direction::E, game_state);
-        }
-        if input.is_pressed(Key::MoveW) {
-            do_shove(self, player, Direction::W, game_state);
-        }
-        if input.is_pressed(Key::MoveNE) {
-            do_shove(self, player, Direction::NE, game_state);
-        }
-        if input.is_pressed(Key::MoveNW) {
-            do_shove(self, player, Direction::NW, game_state);
-        }
-        if input.is_pressed(Key::MoveSE) {
-            do_shove(self, player, Direction::SE, game_state);
-        }
-        if input.is_pressed(Key::MoveSW) {
-            do_shove(self, player, Direction::SW, game_state);
-        }
+        });
     }
 
     fn handle_slash_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
-        fn do_slash(view: &mut GameView, player: Entity, dir: Direction, game_state: &mut GameState) {
-            view.input_mode = InputMode::Move;
+        handle_directional_action_input(input, |dir| {
+            self.input_mode = InputMode::Move;
             result_error(act(player, Action::Slash(dir), game_state))
-        }
-
-        if input.is_pressed(Key::MoveN) {
-            do_slash(self, player, Direction::N, game_state);
-        }
-        if input.is_pressed(Key::MoveS) {
-            do_slash(self, player, Direction::S, game_state);
-        }
-        if input.is_pressed(Key::MoveE) {
-            do_slash(self, player, Direction::E, game_state);
-        }
-        if input.is_pressed(Key::MoveW) {
-            do_slash(self, player, Direction::W, game_state);
-        }
-        if input.is_pressed(Key::MoveNE) {
-            do_slash(self, player, Direction::NE, game_state);
-        }
-        if input.is_pressed(Key::MoveNW) {
-            do_slash(self, player, Direction::NW, game_state);
-        }
-        if input.is_pressed(Key::MoveSE) {
-            do_slash(self, player, Direction::SE, game_state);
-        }
-        if input.is_pressed(Key::MoveSW) {
-            do_slash(self, player, Direction::SW, game_state);
-        }
+        });
     }
 
     fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
@@ -278,5 +203,34 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
             }
         }
         self.handle_input(state, input)
+    }
+}
+
+fn handle_directional_action_input<F>(input: &InputImpl, mut action: F)
+    where F: FnMut(Direction) -> ()
+{
+    if input.is_pressed(Key::MoveN) {
+        action(Direction::N);
+    }
+    if input.is_pressed(Key::MoveS) {
+        action(Direction::S);
+    }
+    if input.is_pressed(Key::MoveE) {
+        action(Direction::E);
+    }
+    if input.is_pressed(Key::MoveW) {
+        action(Direction::W);
+    }
+    if input.is_pressed(Key::MoveNE) {
+        action(Direction::NE);
+    }
+    if input.is_pressed(Key::MoveNW) {
+        action(Direction::NW);
+    }
+    if input.is_pressed(Key::MoveSE) {
+        action(Direction::SE);
+    }
+    if input.is_pressed(Key::MoveSW) {
+        action(Direction::SW);
     }
 }
