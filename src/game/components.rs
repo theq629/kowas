@@ -31,6 +31,11 @@ impl Health {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Inventory(pub Vec<Entity>);
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Flying {
+    pub velocity: Point
+}
+
 serialize_components!(
     Position,
     Renderable,

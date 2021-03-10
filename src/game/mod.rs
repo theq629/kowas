@@ -53,6 +53,7 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
 pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
     dispatch_action(actor, action, state).and_then(|ok| {
         systems::check_deaths(state);
+        systems::update_flying(state);
         if let Some(player) = state.player {
             if !state.world.contains(player) {
                 state.player = None;
