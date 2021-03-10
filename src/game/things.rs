@@ -9,7 +9,8 @@ pub fn player(pos: Point, world: &mut World) -> Entity {
         components::Renderable(Graphic::Player),
         components::Blocks,
         components::Health::new(20),
-        components::Inventory(Vec::new())
+        components::Inventory(Vec::new()),
+        components::Power(1)
     ))
 }
 

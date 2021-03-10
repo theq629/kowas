@@ -3,13 +3,14 @@ use hecs::Entity;
 use crate::log_err::result_error;
 use crate::game::state::GameState;
 use crate::game::directions::Direction;
-use crate::game::components::{Position, Flying, Blocks};
+use crate::game::components::{Position, Flying, Blocks, Power};
 use super::change::{ChangeResult, ChangeOk, ChangeErr};
 
-fn shove(_shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
+fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
+    let shover_power = state.world.get::<Power>(shover)?.0;
     let _ = state.world.insert_one(shovee, Flying { velocity: Point::zero() });
     let mut shovee_flying = state.world.get_mut::<Flying>(shovee)?;
-    shovee_flying.velocity = dir;
+    shovee_flying.velocity = dir * shover_power;
     Ok(ChangeOk)
 }
 

@@ -6,7 +6,7 @@ use sevendrl_2021::bracket_views::{Input, View};
 use sevendrl_2021::game::{GameState, act};
 use sevendrl_2021::game::graphics::Graphic;
 use sevendrl_2021::game::liquids::Liquid;
-use sevendrl_2021::game::components::{Position, Renderable, Health};
+use sevendrl_2021::game::components::{Position, Renderable, Health, Power};
 use sevendrl_2021::game::actions::Action;
 use sevendrl_2021::game::directions::Direction;
 use crate::input::{Key, InputImpl};
@@ -93,8 +93,10 @@ impl GameView {
         match self.input_mode {
             InputMode::Move => {
                 if let Some(player) = game_state.player {
+                    let power = game_state.world.get::<Power>(player).unwrap();
+                    ctx.print_color(0, dim_y - 1, RGB::named(BLACK), bg, format!("POWER {}", power.0));
                     let health = game_state.world.get::<Health>(player).unwrap();
-                    ctx.print_color(0, dim_y - 1, RGB::named(BLACK), bg, format!("HEALTH {}/{}", health.value, health.max));
+                    ctx.print_color(9, dim_y - 1, RGB::named(BLACK), bg, format!("HEALTH {}/{}", health.value, health.max));
                 }
             },
             InputMode::Shove => {
@@ -189,6 +191,10 @@ impl GameView {
 
         if input.is_pressed(Key::Get) {
             result_error(act(player, Action::Get, game_state));
+        }
+
+        if input.is_pressed(Key::GainPower) {
+            result_error(act(player, Action::GainPower, game_state));
         }
     }
 

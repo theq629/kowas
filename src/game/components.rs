@@ -36,11 +36,15 @@ pub struct Flying {
     pub velocity: Point
 }
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Power(pub i32);
+
 serialize_components!(
     Position,
     Renderable,
     Blocks,
     Health,
     Inventory,
-    Flying
+    Flying,
+    Power
 );
