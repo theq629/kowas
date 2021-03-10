@@ -5,6 +5,7 @@ mod game_view;
 mod intro_dialog;
 mod save_error_dialog;
 mod load_error_dialog;
+mod cell_info;
 
 pub use dialog::{DialogView, DialogChoice};
 pub use fancy_logo_menu::{FancyLogoMenuView, FancyLogoMenuChoice};

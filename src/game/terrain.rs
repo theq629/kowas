@@ -12,6 +12,16 @@ pub enum Terrain {
 }
 
 impl Terrain {
+    pub fn name(self) -> String {
+        match self {
+            Terrain::Floor => "floor".to_string(),
+            Terrain::FloorUnderRoof => "floor under a roof".to_string(),
+            Terrain::DamagedFloor => "damaged floor".to_string(),
+            Terrain::DamagedFloorUnderRoof => "damaged floor under a roof".to_string(),
+            Terrain::Wall => "wall".to_string()
+        }
+    }
+
     pub fn is_solid(self) -> bool {
         match self {
             Terrain::Wall => true,

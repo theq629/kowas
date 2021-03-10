@@ -12,6 +12,7 @@ use sevendrl_2021::game::directions::Direction;
 use crate::input::{Key, InputImpl};
 use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
+use super::cell_info::cell_info;
 
 enum InputMode {
     Move,
@@ -118,6 +119,81 @@ impl GameView {
         }
     }
 
+    fn draw_tooltips(&self, view_centre: Point, game_state: &GameState, ctx: &mut BTerm) {
+        let (screen_width, screen_height) = ctx.get_char_size();
+
+        let bg = RGB::from_u8(64, 64, 64);
+        let fg = RGB::from_u8(192, 192, 192);
+        let arrow_fg = RGB::from_u8(255, 255, 255);
+
+        let (mouse_x, mouse_y) = ctx.mouse_pos();
+        if mouse_y >= (screen_height - 8) as i32 {
+            return;
+        }
+
+        let world_mouse_pos = self.screen_to_world_point(Point::new(mouse_x, mouse_y), view_centre, game_state, ctx);
+        if world_mouse_pos.is_none() {
+            return;
+        }
+        let world_mouse_pos = world_mouse_pos.unwrap();
+
+        let tooltip = cell_info(world_mouse_pos, game_state);
+
+        if !tooltip.is_empty() {
+            let mut width: i32 = 0;
+            for s in tooltip.iter() {
+                if width < s.len() as i32 {
+                    width = s.len() as i32;
+                }
+            }
+            width += 3;
+
+            let arrow_pos: Point;
+            let arrow: String;
+            let box_x: i32;
+            let text_x: i32;
+            if mouse_x > (screen_width / 2) as i32 {
+                arrow_pos = Point::new(mouse_x - 2, mouse_y);
+                arrow = "->".to_string();
+                box_x = mouse_x - width;
+                text_x = mouse_x - width;
+            } else {
+                arrow_pos = Point::new(mouse_x + 1, mouse_y);
+                arrow = "<-".to_string();
+                box_x = mouse_x + 1;
+                text_x = mouse_x + 4;
+            }
+            ctx.fill_region(Rect::with_size(box_x, mouse_y, width - 1, (tooltip.len() - 1) as i32), to_cp437(' '), fg, bg);
+            let mut y = mouse_y;
+            for s in tooltip.iter() {
+                ctx.print_color(text_x, y, fg, bg, s);
+                y += 1;
+            }
+            ctx.print_color(arrow_pos.x, arrow_pos.y, arrow_fg, bg, &arrow);
+        }
+    }
+
+    fn screen_to_world_point(&self, point: Point, view_centre: Point, game_state: &GameState, ctx: &mut BTerm) -> Option<Point> {
+        let (screen_width, screen_height) = ctx.get_char_size();
+        let world_min = Point::new(
+            max(0, view_centre.x - (screen_width / 2) as i32),
+            max(0, view_centre.y - (screen_height / 2) as i32)
+        );
+        let screen_min = Point::new(
+            max(0, (screen_width / 2) as i32 - view_centre.x),
+            max(0, (screen_height / 2) as i32 - view_centre.y)
+        );
+        let world_pos = point + world_min - screen_min;
+        if world_pos.x >= 0
+            && world_pos.y >= 0
+            && world_pos.x < game_state.terrain.dim.x
+            && world_pos.y <= game_state.terrain.dim.y {
+            Some(world_pos)
+        } else {
+            None
+        }
+    }
+
     fn handle_move_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             let res = act(player, Action::MeleeAttack(dir), game_state).or_else(|_| {
@@ -200,6 +276,7 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
                     .unwrap_or(Point::new(0, 0));
                 self.draw_map(view_centre, game_state, &state.graphics, ctx);
                 self.draw_ui(game_state, ctx);
+                self.draw_tooltips(view_centre, game_state, ctx);
             }
         }
         self.handle_input(state, input)
