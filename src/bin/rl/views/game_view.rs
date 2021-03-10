@@ -125,6 +125,10 @@ impl GameView {
             move_or_attack(player, Direction::SW, game_state);
         }
 
+        if input.is_pressed(Key::Shove) {
+            result_error(act(player, Action::Shove(Direction::N), game_state));
+        }
+
         if input.is_pressed(Key::Get) {
             result_error(act(player, Action::Get, game_state));
         }

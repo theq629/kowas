@@ -41,6 +41,9 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
         Action::MeleeAttack(dir) => {
             systems::melee_attack_toward(actor, dir, state)
         },
+        Action::Shove(dir) => {
+            systems::shove_toward(actor, dir, state)
+        },
         Action::Get => {
             systems::get(actor, state)
         },

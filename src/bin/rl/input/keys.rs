@@ -10,5 +10,6 @@ pub enum Key {
     MoveSE,
     MoveSW,
     Get,
+    Shove,
     Quit
 }

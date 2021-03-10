@@ -7,6 +7,7 @@ pub enum Action {
     DoNothing,
     Move(Direction),
     MeleeAttack(Direction),
+    Shove(Direction),
     Get,
     Drop(Entity)
 }

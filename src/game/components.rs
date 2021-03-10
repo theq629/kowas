@@ -41,5 +41,6 @@ serialize_components!(
     Renderable,
     Blocks,
     Health,
-    Inventory
+    Inventory,
+    Flying
 );

@@ -12,4 +12,4 @@ pub use movement::move_entity;
 pub use getdrop::{get, drop};
 pub use melee::melee_attack_toward;
 pub use death::check_deaths;
-pub use flying::update_flying;
+pub use flying::{update_flying, shove_toward};
