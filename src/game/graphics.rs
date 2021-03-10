@@ -6,6 +6,8 @@ pub enum Graphic {
     Player,
     Floor,
     FloorUnderRoof,
+    DamagedFloor,
+    DamagedFloorUnderRoof,
     Wall,
     Gore,
     Goblin,

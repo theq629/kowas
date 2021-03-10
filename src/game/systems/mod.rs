@@ -2,6 +2,7 @@ mod change;
 mod do_nothing;
 mod movement;
 mod getdrop;
+mod splatter;
 mod melee;
 mod death;
 mod flying;

@@ -7,9 +7,11 @@ use crate::game::directions::Direction;
 use crate::game::components::{Health, Position};
 use super::change::{ChangeResult, ChangeOk};
 use super::particles::make_particle;
+use super::splatter::splatter_blood;
 
 pub fn melee_damage(_attacker: Entity, attackee: Entity, state: &mut GameState) -> ChangeResult {
     let attackee_pos = state.world.get::<Position>(attackee)?.0;
+    splatter_blood(attackee_pos, 10, state);
     make_particle(attackee_pos, Graphic::DamageEffect, state);
     let mut attackee_health = state.world.get_mut::<Health>(attackee)?;
     attackee_health.value -= 1;
@@ -30,6 +32,10 @@ pub fn collision_damage(collider: Entity, collidee: Entity, velocity: i32, state
     {
         let collider_pos = state.world.get::<Position>(collider)?.0;
         let collidee_pos = state.world.get::<Position>(collidee)?.0;
+        if velocity > 8 {
+            state.terrain[collider_pos] = state.terrain[collider_pos].damaged();
+            state.terrain[collidee_pos] = state.terrain[collidee_pos].damaged();
+        }
         make_particle(collider_pos, Graphic::DamageEffect, state);
         make_particle(collidee_pos, Graphic::DamageEffect, state);
     }
@@ -46,6 +52,9 @@ pub fn slash_damage(pos: Point, dir: Direction, power: i32, state: &mut GameStat
             .filter(|(_, (p, _))| p.0 == pos)
         {
             health.value -= damage;
+        }
+        if power > 2 {
+            state.terrain[pos] = state.terrain[pos].damaged();
         }
     }
 
