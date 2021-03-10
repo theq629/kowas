@@ -5,6 +5,7 @@ use enum_map::Enum;
 pub enum Graphic {
     Player,
     Floor,
+    FloorUnderRoof,
     Wall,
     Gore,
     Goblin,

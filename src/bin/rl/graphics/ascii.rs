@@ -11,6 +11,10 @@ pub fn make_ascii() -> EnumMap<Graphic, BracketGraphic> {
         },
         Graphic::Floor => BracketGraphic {
             glyph: to_cp437('.'),
+            colour: RGB::named(DARKGREY)
+        },
+        Graphic::FloorUnderRoof => BracketGraphic {
+            glyph: to_cp437('_'),
             colour: RGB::named(LIGHTGREY)
         },
         Graphic::Wall => BracketGraphic {
