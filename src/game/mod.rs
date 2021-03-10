@@ -9,7 +9,7 @@ mod things;
 mod systems;
 mod state;
 
-use hecs::Entity;
+use hecs::{World, Entity};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 pub use state::GameState;
@@ -23,6 +23,7 @@ pub fn new_game() -> GameState {
     let gened = gen_map(dim, &mut rng);
     GameState {
         world: gened.world,
+        particles_world: World::new(),
         terrain: gened.terrain,
         liquids: gened.liquids,
         player: gened.player,
@@ -67,4 +68,8 @@ pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult
         }
         Ok(ok)
     })
+}
+
+pub fn visual_tick(state: &mut GameState) {
+    systems::tick_particles(state);
 }

@@ -9,5 +9,6 @@ pub enum Graphic {
     Wall,
     Gore,
     Goblin,
-    Orc
+    Orc,
+    DamageEffect
 }

@@ -3,7 +3,7 @@ use bracket_terminal::prelude::*;
 use hecs::Entity;
 use sevendrl_2021::log_err::result_error;
 use sevendrl_2021::bracket_views::{Input, View};
-use sevendrl_2021::game::{GameState, act};
+use sevendrl_2021::game::{GameState, act, visual_tick};
 use sevendrl_2021::game::graphics::Graphic;
 use sevendrl_2021::game::liquids::Liquid;
 use sevendrl_2021::game::components::{Position, Renderable, Health, Power};
@@ -74,6 +74,15 @@ impl GameView {
 
         let offset = screen_min - world_min;
         for (_, (pos, renderable)) in game_state.world.query::<(&Position, &Renderable)>().iter() {
+            let pos = pos.0;
+            let graphic = &graphics[renderable.0];
+            if pos.x >= world_min.x && pos.x < world_max.x && pos.y >= world_min.y && pos.y < world_max.y {
+                let screen_pos = offset + pos;
+                ctx.set(screen_pos.x, screen_pos.y, graphic.colour, self.bg_col, graphic.glyph);
+            }
+        }
+
+        for (_, (pos, renderable)) in game_state.particles_world.query::<(&Position, &Renderable)>().iter() {
             let pos = pos.0;
             let graphic = &graphics[renderable.0];
             if pos.x >= world_min.x && pos.x < world_max.x && pos.y >= world_min.y && pos.y < world_max.y {
@@ -216,7 +225,8 @@ impl GameView {
 impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
     fn tick(&mut self, state: &mut UiState, input: &InputImpl, ctx: &mut BTerm) -> Option<UiStateAction> {
         ctx.cls();
-        if let Some(game_state) = &state.game_state {
+        if let Some(game_state) = &mut state.game_state {
+            visual_tick(game_state);
             if let Some(player) = game_state.player {
                 let view_centre = game_state.world.get::<Position>(player)
                     .map(|p| p.0)

@@ -9,6 +9,7 @@ use super::components::ComponentSerializationContext;
 
 pub struct GameState {
     pub world: World,
+    pub particles_world: World,
     pub terrain: TileMap<Terrain>,
     pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
@@ -81,6 +82,7 @@ impl LoadGameState {
     fn to_game_state(self) -> GameState {
         GameState {
             world: self.world.world,
+            particles_world: World::new(),
             terrain: self.terrain,
             liquids: self.liquids,
             player: self.player,
