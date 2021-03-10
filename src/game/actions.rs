@@ -8,6 +8,7 @@ pub enum Action {
     Move(Direction),
     MeleeAttack(Direction),
     Shove(Direction),
+    Slash(Direction),
     Get,
     Drop(Entity),
     GainPower

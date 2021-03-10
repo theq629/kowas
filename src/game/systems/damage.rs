@@ -1,7 +1,9 @@
 use std::cmp::max;
+use bracket_geometry::prelude::{Point, VectorLine};
 use hecs::Entity;
 use crate::game::state::GameState;
 use crate::game::graphics::Graphic;
+use crate::game::directions::Direction;
 use crate::game::components::{Health, Position};
 use super::change::{ChangeResult, ChangeOk};
 use super::particles::make_particle;
@@ -28,6 +30,21 @@ pub fn collision_damage(collider: Entity, collidee: Entity, velocity: i32, state
         let collidee_pos = state.world.get::<Position>(collidee)?.0;
         make_particle(collider_pos, Graphic::DamageEffect, state);
         make_particle(collidee_pos, Graphic::DamageEffect, state);
+    }
+
+    Ok(ChangeOk)
+}
+
+pub fn slash_damage(pos: Point, dir: Direction, power: i32, state: &mut GameState) -> ChangeResult {
+    let end_pos = pos + dir.to_point() * 2 * power;
+    for (i, pos) in VectorLine::new(pos, end_pos).skip(1).enumerate() {
+        let damage = 2 * power - i as i32;
+        make_particle(pos, Graphic::DamageEffect, state);
+        for (_, (_, mut health)) in state.world.query::<(&Position, &mut Health)>().iter()
+            .filter(|(_, (p, _))| p.0 == pos)
+        {
+            health.value -= damage;
+        }
     }
 
     Ok(ChangeOk)

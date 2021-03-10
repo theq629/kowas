@@ -15,7 +15,8 @@ use crate::graphics::GraphicLookup;
 
 enum InputMode {
     Move,
-    Shove
+    Shove,
+    Slash
 }
 
 pub struct GameView {
@@ -110,6 +111,9 @@ impl GameView {
             },
             InputMode::Shove => {
                 ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction");
+            },
+            InputMode::Slash => {
+                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction");
             }
         }
     }
@@ -180,6 +184,38 @@ impl GameView {
         }
     }
 
+    fn handle_slash_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+        fn do_slash(view: &mut GameView, player: Entity, dir: Direction, game_state: &mut GameState) {
+            view.input_mode = InputMode::Move;
+            result_error(act(player, Action::Slash(dir), game_state))
+        }
+
+        if input.is_pressed(Key::MoveN) {
+            do_slash(self, player, Direction::N, game_state);
+        }
+        if input.is_pressed(Key::MoveS) {
+            do_slash(self, player, Direction::S, game_state);
+        }
+        if input.is_pressed(Key::MoveE) {
+            do_slash(self, player, Direction::E, game_state);
+        }
+        if input.is_pressed(Key::MoveW) {
+            do_slash(self, player, Direction::W, game_state);
+        }
+        if input.is_pressed(Key::MoveNE) {
+            do_slash(self, player, Direction::NE, game_state);
+        }
+        if input.is_pressed(Key::MoveNW) {
+            do_slash(self, player, Direction::NW, game_state);
+        }
+        if input.is_pressed(Key::MoveSE) {
+            do_slash(self, player, Direction::SE, game_state);
+        }
+        if input.is_pressed(Key::MoveSW) {
+            do_slash(self, player, Direction::SW, game_state);
+        }
+    }
+
     fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
         if input.is_pressed(Key::DoNothing) {
             result_error(act(player, Action::DoNothing, game_state));
@@ -191,9 +227,15 @@ impl GameView {
             },
             InputMode::Shove => {
                 self.handle_shove_input(player, game_state, input)
+            },
+            InputMode::Slash => {
+                self.handle_slash_input(player, game_state, input)
             }
         }
 
+        if input.is_pressed(Key::Slash) {
+            self.input_mode = InputMode::Slash;
+        }
         if input.is_pressed(Key::Shove) {
             self.input_mode = InputMode::Shove;
         }

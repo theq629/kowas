@@ -8,6 +8,7 @@ mod flying;
 mod power;
 mod damage;
 mod particles;
+mod sword;
 
 pub use change::{ChangeResult, ChangeOk, ChangeErr};
 pub use do_nothing::do_nothing;
@@ -18,3 +19,4 @@ pub use death::check_deaths;
 pub use flying::{update_flying, shove_toward};
 pub use power::gain_power;
 pub use particles::tick_particles;
+pub use sword::slash_toward;
