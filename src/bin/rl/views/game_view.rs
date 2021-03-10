@@ -110,10 +110,10 @@ impl GameView {
                 }
             },
             InputMode::Shove => {
-                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction");
+                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to shove");
             },
             InputMode::Slash => {
-                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction");
+                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to slash");
             }
         }
     }
