@@ -10,6 +10,7 @@ mod power;
 mod damage;
 mod particles;
 mod sword;
+mod structures;
 
 pub use change::{ChangeResult, ChangeOk, ChangeErr};
 pub use do_nothing::do_nothing;

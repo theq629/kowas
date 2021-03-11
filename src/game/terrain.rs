@@ -8,6 +8,7 @@ pub enum Terrain {
     FloorUnderRoof,
     DamagedFloor,
     DamagedFloorUnderRoof,
+    Rubble,
     Wall,
     BoundaryWall
 }
@@ -19,6 +20,7 @@ impl Terrain {
             Terrain::FloorUnderRoof => "floor under a roof",
             Terrain::DamagedFloor => "damaged floor",
             Terrain::DamagedFloorUnderRoof => "damaged floor under a roof",
+            Terrain::Rubble => "rubble",
             Terrain::Wall => "wall",
             Terrain::BoundaryWall => "boundary wall"
         }
@@ -38,6 +40,7 @@ impl Terrain {
             Terrain::FloorUnderRoof => Graphic::FloorUnderRoof,
             Terrain::DamagedFloor => Graphic::DamagedFloor,
             Terrain::DamagedFloorUnderRoof => Graphic::DamagedFloorUnderRoof,
+            Terrain::Rubble => Graphic::Rubble,
             Terrain::Wall => Graphic::Wall,
             Terrain::BoundaryWall => Graphic::BoundaryWall
         }
