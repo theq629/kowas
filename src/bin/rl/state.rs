@@ -6,7 +6,7 @@ use sevendrl_2021::bracket_views::{View, ViewStack};
 use sevendrl_2021::game::{GameState, new_game};
 use crate::graphics::GraphicLookup;
 use crate::input::{Key, KeyBindings, InputImpl, make_default_key_bindings};
-use super::views::{GameView, make_main_menu, make_intro_dialog, make_save_error_dialog, make_load_error_dialog};
+use super::views::{GameView, make_main_menu, make_intro_dialog, make_save_error_dialog, make_load_error_dialog, make_help_dialog};
 use super::branding::FILENAME;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -17,6 +17,7 @@ pub enum UiStateAction {
     Quit,
     SaveAndMainMenu,
     EndGameAndMainMenu,
+    ShowHelp,
     RemoveSave
 }
 
@@ -137,6 +138,9 @@ impl BracketState {
                 self.state.close_game();
                 self.views.clear();
                 self.show_main_menu();
+            },
+            UiStateAction::ShowHelp => {
+                self.views.push(make_help_dialog());
             },
             UiStateAction::NewGame => {
                 self.state.new_game();

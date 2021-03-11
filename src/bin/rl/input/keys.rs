@@ -13,5 +13,6 @@ pub enum Key {
     Shove,
     Slash,
     GainPower,
+    Help,
     Quit
 }

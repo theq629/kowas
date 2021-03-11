@@ -46,6 +46,7 @@ pub fn make_default_key_bindings() -> KeyBindings {
     bindings.bind(VirtualKeyCode::Z, Key::DoNothing);
     bindings.bind(VirtualKeyCode::Period, Key::DoNothing);
 
+    bindings.bind(VirtualKeyCode::Slash, Key::Help);
     bindings.bind(VirtualKeyCode::Q, Key::Quit);
 
     bindings

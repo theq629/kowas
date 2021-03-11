@@ -257,6 +257,9 @@ impl GameView {
             }
         }
 
+        if input.is_pressed(Key::Help) {
+            return Some(UiStateAction::ShowHelp)
+        }
         if input.is_pressed(Key::Quit) {
             return Some(UiStateAction::SaveAndMainMenu)
         }
