@@ -24,6 +24,7 @@ pub struct DialogView<S, A> {
     choice_key_col: RGB,
     choice_hover_col: RGB,
     choice_hover_glyph: FontCharType,
+    pub max_text_width: u32,
     title: String,
     text: String,
     default: Option<usize>,
@@ -52,6 +53,7 @@ impl <S, A> DialogView<S, A> {
             choice_key_col: RGB::from_u8(0xff, 0x44, 0x00),
             choice_hover_col: RGB::from_u8(0xff, 0x00, 0x00),
             choice_hover_glyph: 175,
+            max_text_width: 32,
             title: title.to_string(),
             text: text.to_string(),
             default: default,
@@ -61,8 +63,6 @@ impl <S, A> DialogView<S, A> {
 
     fn draw(&mut self, ctx: &mut BTerm) -> Option<usize> {
         let (dim_x, dim_y) = ctx.get_char_size();
-        let text_width = min(32, dim_y - 2);
-        let text_left_x = (dim_x - text_width) / 2;
         let choices_max_size = self.choices.iter().map(|c| c.text.len()).max().unwrap_or(0);
         let choices_left_x = (dim_x - choices_max_size as u32 - 2) / 2;
         let choices_right_x = choices_left_x + choices_max_size as u32;
@@ -73,6 +73,10 @@ impl <S, A> DialogView<S, A> {
         ctx.print_color_centered(y, self.title_col, self.bg_col, &self.title);
         y += 2;
 
+        let max_text_width = min(self.max_text_width, dim_x - 2);
+        let max_line_width = self.text.lines().map(|l| l.len()).max().unwrap_or(0);
+        let text_width = min(max_line_width as u32, max_text_width);
+        let text_left_x = (dim_x - text_width) / 2;
         let lines = textwrap::wrap(&self.text, text_width as usize);
         for line in lines {
             ctx.print_color(text_left_x, y, self.text_col, self.bg_col, line);
