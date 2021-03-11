@@ -6,6 +6,7 @@ use crate::game::directions::Direction;
 use crate::game::components::{Position, Flying, Blocks, Power};
 use super::change::{ChangeResult, ChangeOk, ChangeErr};
 use super::damage::collision_damage;
+use super::structures::impact;
 
 fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
     let shover_power = state.world.get::<Power>(shover)?.0;
@@ -44,6 +45,7 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
     'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
         if state.terrain[pos].is_solid() {
             collision = Some(entity);
+            result_error(impact(pos, vel, state));
             break 'posloop;
         }
         for (entity, _) in state.world.query::<(&Position, &Blocks)>()
