@@ -15,6 +15,10 @@ fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> C
     Ok(ChangeOk)
 }
 
+pub fn impact_shove(shovee: Entity, vel: Point, state: &mut GameState) {
+    let _ = state.world.insert_one(shovee, Flying { velocity: vel });
+}
+
 pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> ChangeResult {
     let pos = state.world.get::<Position>(shover)?.0.clone();
     let target_pos = pos + dir.to_point();
@@ -57,19 +61,25 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
     if let Some(collision) = collision {
         let v = ((vel.x * vel.x + vel.y * vel.y) as f32).sqrt() as i32;
         let _ = collision_damage(entity, collision, v, state);
+        impact_shove(collision, vel / 2, state);
     }
 }
 
 pub fn update_flying(state: &mut GameState) {
-    let flying: Vec<_> = state.world.query::<(&Position, &Flying)>()
-        .iter()
-        .map(|(e, (p, f))| (e, p.0, f.velocity))
-        .collect();
-    for (entity, cur_pos, vel) in flying {
-        move_flying(entity, cur_pos, vel, state);
-    }
-    let flying: Vec<_> = state.world.query::<&Flying>().iter().map(|(e, _)| e).collect();
-    for entity in flying {
-        result_error(state.world.remove_one::<Flying>(entity));
+    loop {
+        let flying: Vec<_> = state.world.query::<(&Position, &Flying)>()
+            .iter()
+            .map(|(e, (p, f))| (e, p.0, f.velocity))
+            .collect();
+        let done: Vec<_> = state.world.query::<&Flying>().iter().map(|(e, _)| e).collect();
+        if flying.is_empty() {
+            break;
+        }
+        for (entity, cur_pos, vel) in flying {
+            move_flying(entity, cur_pos, vel, state);
+        }
+        for entity in done {
+            result_error(state.world.remove_one::<Flying>(entity));
+        }
     }
 }

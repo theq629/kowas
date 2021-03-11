@@ -4,11 +4,12 @@ use hecs::Entity;
 use crate::game::state::GameState;
 use crate::game::graphics::Graphic;
 use crate::game::directions::Direction;
-use crate::game::components::{Health, Position};
+use crate::game::components::{Health, Position, Blocks};
 use super::change::{ChangeResult, ChangeOk};
 use super::particles::make_particle;
 use super::splatter::splatter_blood;
 use super::structures::impact;
+use super::flying::impact_shove;
 
 pub fn melee_damage(_attacker: Entity, attackee: Entity, state: &mut GameState) -> ChangeResult {
     let attackee_pos = state.world.get::<Position>(attackee)?.0;
@@ -53,6 +54,14 @@ pub fn slash_damage(pos: Point, dir: Direction, power: i32, state: &mut GameStat
             .filter(|(_, (p, _))| p.0 == pos)
         {
             health.value -= damage;
+        }
+        let to_shove: Vec<_> = state.world.query::<(&Position, &mut Blocks)>()
+            .iter()
+            .filter(|(_, (p, _))| p.0 == pos)
+            .map(|(e, _)| e)
+            .collect();
+        for entity in to_shove {
+            impact_shove(entity, dir.to_point() * damage / 2, state);
         }
         if power > 2 {
             state.terrain[pos] = state.terrain[pos].damaged();
