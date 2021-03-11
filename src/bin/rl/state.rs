@@ -82,15 +82,22 @@ impl BracketState {
             storage.data().file("savegame".to_string(), FileMode::Binary)
         });
         let quitter = get_quitter();
-        let state = UiState {
+        let mut state = UiState {
             graphics: graphics,
             ui_can_quit: quitter.is_some(),
             ui_save_storage_avail: save_file.is_some(),
-            show_intro_dialog: false,
+            show_intro_dialog: true,
             save_file: save_file,
             quitter: quitter,
             game_state: None
         };
+        {
+            state.show_intro_dialog = true;
+            #[cfg(debug_assertions)]
+            {
+                state.show_intro_dialog = false;
+            }
+        }
         let mut new = BracketState {
             state: state,
             key_bindings: make_default_key_bindings(),
