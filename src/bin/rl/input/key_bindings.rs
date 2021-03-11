@@ -31,6 +31,13 @@ impl KeyBindings {
             self.bindings.get_mut(&input_key).unwrap().push(key);
         }
     }
+
+    pub fn bindings(&self) -> Vec<(VirtualKeyCode, Key)> {
+        return self.bindings.iter()
+            .map(|(ik, oks)| oks.iter().map(move |ok| (ik.clone(), ok.clone())))
+            .flatten()
+            .collect();
+    }
 }
 
 pub struct InputImpl {

@@ -140,7 +140,7 @@ impl BracketState {
                 self.show_main_menu();
             },
             UiStateAction::ShowHelp => {
-                self.views.push(make_help_dialog());
+                self.views.push(make_help_dialog(&self.key_bindings));
             },
             UiStateAction::NewGame => {
                 self.state.new_game();
