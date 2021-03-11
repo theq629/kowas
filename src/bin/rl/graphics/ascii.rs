@@ -29,6 +29,10 @@ pub fn make_ascii() -> EnumMap<Graphic, BracketGraphic> {
             glyph: to_cp437('#'),
             colour: RGB::named(GREY)
         },
+        Graphic::BoundaryWall => BracketGraphic {
+            glyph: to_cp437('#'),
+            colour: RGB::named(LIGHTBLUE)
+        },
         Graphic::Gore => BracketGraphic {
             glyph: to_cp437('%'),
             colour: RGB::named(RED)

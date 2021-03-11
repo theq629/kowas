@@ -8,7 +8,8 @@ pub enum Terrain {
     FloorUnderRoof,
     DamagedFloor,
     DamagedFloorUnderRoof,
-    Wall
+    Wall,
+    BoundaryWall
 }
 
 impl Terrain {
@@ -18,13 +19,15 @@ impl Terrain {
             Terrain::FloorUnderRoof => "floor under a roof",
             Terrain::DamagedFloor => "damaged floor",
             Terrain::DamagedFloorUnderRoof => "damaged floor under a roof",
-            Terrain::Wall => "wall"
+            Terrain::Wall => "wall",
+            Terrain::BoundaryWall => "boundary wall"
         }
     }
 
     pub fn is_solid(self) -> bool {
         match self {
             Terrain::Wall => true,
+            Terrain::BoundaryWall => true,
             _ => false
         }
     }
@@ -35,7 +38,8 @@ impl Terrain {
             Terrain::FloorUnderRoof => Graphic::FloorUnderRoof,
             Terrain::DamagedFloor => Graphic::DamagedFloor,
             Terrain::DamagedFloorUnderRoof => Graphic::DamagedFloorUnderRoof,
-            Terrain::Wall => Graphic::Wall
+            Terrain::Wall => Graphic::Wall,
+            Terrain::BoundaryWall => Graphic::BoundaryWall
         }
     }
 
