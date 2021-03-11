@@ -12,13 +12,13 @@ pub enum Terrain {
 }
 
 impl Terrain {
-    pub fn name(self) -> String {
+    pub fn name(self) -> &'static str {
         match self {
-            Terrain::Floor => "floor".to_string(),
-            Terrain::FloorUnderRoof => "floor under a roof".to_string(),
-            Terrain::DamagedFloor => "damaged floor".to_string(),
-            Terrain::DamagedFloorUnderRoof => "damaged floor under a roof".to_string(),
-            Terrain::Wall => "wall".to_string()
+            Terrain::Floor => "floor",
+            Terrain::FloorUnderRoof => "floor under a roof",
+            Terrain::DamagedFloor => "damaged floor",
+            Terrain::DamagedFloorUnderRoof => "damaged floor under a roof",
+            Terrain::Wall => "wall"
         }
     }
 

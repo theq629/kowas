@@ -2,7 +2,7 @@ use bracket_geometry::prelude::Point;
 use sevendrl_2021::game::GameState;
 use sevendrl_2021::game::components::{Position, Renderable};
 
-pub fn cell_info(pos: Point, state: &GameState) -> Vec<String> {
+pub fn cell_info(pos: Point, state: &GameState) -> Vec<&str> {
     let mut info = Vec::new();
     info.push(state.terrain[pos].name());
     if let Some(liquid) = state.liquids[pos] {

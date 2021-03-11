@@ -8,10 +8,10 @@ pub enum Liquid {
 }
 
 impl Liquid {
-    pub fn name(self) -> String {
+    pub fn name(self) -> &'static str {
         match self {
-            Liquid::Blood => "blood".to_string(),
-            Liquid::Gore => "gore".to_string()
+            Liquid::Blood => "blood",
+            Liquid::Gore => "gore"
         }
     }
 }

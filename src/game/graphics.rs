@@ -16,18 +16,18 @@ pub enum Graphic {
 }
 
 impl Graphic {
-    pub fn name(self) -> String {
+    pub fn name(self) -> &'static str {
         match self {
-            Graphic::Player => "player".to_string(),
-            Graphic::Floor => "floor".to_string(),
-            Graphic::FloorUnderRoof => "floor under roof".to_string(),
-            Graphic::DamagedFloor => "damaged floor".to_string(),
-            Graphic::DamagedFloorUnderRoof => "damaged floor under roof".to_string(),
-            Graphic::Wall => "wall".to_string(),
-            Graphic::Gore => "gore".to_string(),
-            Graphic::Goblin => "goblin".to_string(),
-            Graphic::Orc => "orc".to_string(),
-            Graphic::DamageEffect => "damage effect".to_string()
+            Graphic::Player => "player",
+            Graphic::Floor => "floor",
+            Graphic::FloorUnderRoof => "floor under roof",
+            Graphic::DamagedFloor => "damaged floor",
+            Graphic::DamagedFloorUnderRoof => "damaged floor under roof",
+            Graphic::Wall => "wall",
+            Graphic::Gore => "gore",
+            Graphic::Goblin => "goblin",
+            Graphic::Orc => "orc",
+            Graphic::DamageEffect => "damage effect"
         }
     }
 }
