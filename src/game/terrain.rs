@@ -53,4 +53,11 @@ impl Terrain {
             t => t
         }
     }
+
+    pub fn wrecked(self) -> Terrain {
+        match self {
+            Terrain::Wall => Terrain::Rubble,
+            t => t.damaged()
+        }
+    }
 }
