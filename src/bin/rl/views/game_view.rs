@@ -193,7 +193,7 @@ impl GameView {
         if world_pos.x >= 0
             && world_pos.y >= 0
             && world_pos.x < game_state.terrain.dim.x
-            && world_pos.y <= game_state.terrain.dim.y {
+            && world_pos.y < game_state.terrain.dim.y {
             Some(world_pos)
         } else {
             None
