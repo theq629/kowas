@@ -39,6 +39,14 @@ pub struct Flying {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Power(pub i32);
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Energy {
+    pub value: i32
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ProvidesEnergy(pub i32);
+
 serialize_components!(
     Position,
     Renderable,
@@ -46,5 +54,7 @@ serialize_components!(
     Health,
     Inventory,
     Flying,
-    Power
+    Power,
+    Energy,
+    ProvidesEnergy
 );
