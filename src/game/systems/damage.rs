@@ -20,6 +20,25 @@ pub fn melee_damage(_attacker: Entity, attackee: Entity, state: &mut GameState) 
     Ok(ChangeOk)
 }
 
+pub fn terrain_collision_damage(collider: Entity, velocity: i32, state: &mut GameState) -> ChangeResult {
+    let health_loss = max(0, velocity - 1);
+    {
+        if let Ok(mut collider_health) = state.world.get_mut::<Health>(collider) {
+            collider_health.value -= health_loss;
+        }
+    }
+
+    {
+        let collider_pos = state.world.get::<Position>(collider)?.0;
+        if velocity > 8 {
+            state.terrain[collider_pos] = state.terrain[collider_pos].damaged();
+        }
+        make_particle(collider_pos, Graphic::DamageEffect, state);
+    }
+
+    Ok(ChangeOk)
+}
+
 pub fn collision_damage(collider: Entity, collidee: Entity, velocity: i32, state: &mut GameState) -> ChangeResult {
     let health_loss = max(0, velocity - 1);
     {

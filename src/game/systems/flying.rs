@@ -5,7 +5,7 @@ use crate::game::state::GameState;
 use crate::game::directions::Direction;
 use crate::game::components::{Position, Flying, Blocks, Power};
 use super::change::{ChangeResult, ChangeOk, ChangeErr};
-use super::damage::collision_damage;
+use super::damage::{collision_damage, terrain_collision_damage};
 use super::structures::impact;
 
 fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
@@ -39,14 +39,17 @@ pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> Ch
 }
 
 fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState) {
+    let vel_mag = ((vel.x * vel.x + vel.y * vel.y) as f32).sqrt() as i32;
     let new_pos = cur_pos + vel;
     let mut last_ok_pos = cur_pos;
     let mut collision = None;
     'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
         if state.terrain[pos].is_solid() {
-            collision = Some(entity);
             result_error(impact(pos, vel, state));
-            break 'posloop;
+            result_error(terrain_collision_damage(entity, vel_mag, state));
+            if state.terrain[pos].is_solid() {
+                break 'posloop;
+            }
         }
         for (entity, _) in state.world.query::<(&Position, &Blocks)>()
             .iter()
@@ -61,8 +64,7 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
         entity_pos.0 = last_ok_pos;
     }
     if let Some(collision) = collision {
-        let v = ((vel.x * vel.x + vel.y * vel.y) as f32).sqrt() as i32;
-        let _ = collision_damage(entity, collision, v, state);
+        let _ = collision_damage(entity, collision, vel_mag, state);
         impact_shove(collision, vel / 2, state);
     }
 }
