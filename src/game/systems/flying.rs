@@ -43,13 +43,18 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
     let new_pos = cur_pos + vel;
     let mut last_ok_pos = cur_pos;
     let mut collision = None;
+    let mut remaining_dist = vel_mag;
     'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
+        if remaining_dist < 0 {
+            break 'posloop;
+        }
         if state.terrain[pos].is_solid() {
             result_error(impact(pos, vel, state));
             result_error(terrain_collision_damage(entity, vel_mag, state));
             if state.terrain[pos].is_solid() {
                 break 'posloop;
             }
+            remaining_dist /= 2;
         }
         for (entity, _) in state.world.query::<(&Position, &Blocks)>()
             .iter()
@@ -59,6 +64,7 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
             break 'posloop;
         }
         last_ok_pos = pos;
+        remaining_dist -= 1;
     }
     if let Ok(mut entity_pos) = state.world.get_mut::<Position>(entity) {
         entity_pos.0 = last_ok_pos;
