@@ -16,7 +16,8 @@ use bracket_random::prelude::RandomNumberGenerator;
 pub use state::GameState;
 use actions::Action;
 use mapgen::gen_map;
-use systems::ChangeResult;
+use systems::{ChangeResult, ChangeOk, ChangeErr};
+use components::Energy;
 
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
@@ -67,9 +68,24 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
     }
 }
 
+fn run_action(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
+    let needs_energy = action.needs_energy();
+    if needs_energy > 0 {
+        let actor_energy = state.world.get::<Energy>(actor)?;
+        if actor_energy.value < needs_energy {
+            return Err(ChangeErr);
+        }
+    }
+    dispatch_action(actor, action, state)?;
+    if let Ok(mut actor_energy) = state.world.get_mut::<Energy>(actor) {
+        actor_energy.value -= needs_energy;
+    }
+    Ok(ChangeOk)
+}
+
 pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
     debug!("acting");
-    dispatch_action(actor, action, state).and_then(|ok| {
+    run_action(actor, action, state).and_then(|ok| {
         debug!("updating flying");
         systems::update_flying(state);
         debug!("checking deaths");

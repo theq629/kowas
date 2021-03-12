@@ -15,3 +15,15 @@ pub enum Action {
     Drop(Entity),
     GainPower
 }
+
+impl Action {
+    pub fn needs_energy(self) -> i32 {
+        match self {
+            Action::Shove(_) => 1,
+            Action::SwordSlash(_) => 3,
+            Action::SwordWhirl => 5,
+            Action::SwordFlurry(_) => 2,
+            _ => 0
+        }
+    }
+}
