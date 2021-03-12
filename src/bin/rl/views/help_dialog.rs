@@ -18,6 +18,8 @@ pub fn make_help_dialog(key_bindings: &KeyBindings) -> DialogView<UiState, UiSta
     bindings.sort_by_key(|(ok, _)| ok.clone());
     let text_lines: Vec<_> = bindings.iter()
         .map(|(ok, iks)| {
+            let mut iks = (*iks).clone();
+            iks.sort();
             let iks_str = iks.iter().map(|ik| input_key_name(*ik)).collect::<Vec<_>>().join(", ");
             format!(
                 "{:<25} {:<11} {}",
