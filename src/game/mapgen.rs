@@ -68,24 +68,12 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
     let offset = Point::new(20, 20);
     gen_rect_gapped(offset, dim - offset, Terrain::Wall, terrain, rng);
 
-    for _ in 0..4 {
+    for _ in 0..8 {
         let pos = Point::new(
             rng.range(10, dim.x - 10),
             rng.range(10, dim.y - 10)
         );
         gen_rect_filled(pos - Point::new(3, 3), pos + Point::new(3, 3), Terrain::Wall, terrain);
-    }
-
-    let bld_half_dim_x = dim.x / 16;
-    let bld_half_dim_y = dim.y / 16;
-    for x in (dim.x / 2 - bld_half_dim_x)..(dim.x / 2 + bld_half_dim_x) {
-        for y in (dim.y / 2 - bld_half_dim_y)..(dim.y / 2 + bld_half_dim_y) {
-            terrain[Point::new(x, y)] = Terrain::FloorUnderRoof;
-        }
-    }
-    for x in (dim.x / 2 - bld_half_dim_x)..(dim.x / 2 + bld_half_dim_x) {
-        terrain[Point::new(x, dim.y / 2 - bld_half_dim_y)] = Terrain::Wall;
-        terrain[Point::new(x, dim.y / 2 + bld_half_dim_y)] = Terrain::Wall;
     }
 }
 

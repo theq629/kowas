@@ -5,9 +5,7 @@ use enum_map::Enum;
 pub enum Graphic {
     Player,
     Floor,
-    FloorUnderRoof,
     DamagedFloor,
-    DamagedFloorUnderRoof,
     Wall,
     Rubble,
     BoundaryWall,
@@ -22,9 +20,7 @@ impl Graphic {
         match self {
             Graphic::Player => "player",
             Graphic::Floor => "floor",
-            Graphic::FloorUnderRoof => "floor under roof",
             Graphic::DamagedFloor => "damaged floor",
-            Graphic::DamagedFloorUnderRoof => "damaged floor under roof",
             Graphic::Wall => "wall",
             Graphic::Rubble => "rubble",
             Graphic::BoundaryWall => "boundary wall",
