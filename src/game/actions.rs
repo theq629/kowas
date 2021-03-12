@@ -13,6 +13,7 @@ pub enum Action {
     SwordFlurry(Direction),
     Get,
     Drop(Entity),
+    GetALotOfEnergy,
     GainPower
 }
 

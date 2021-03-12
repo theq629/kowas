@@ -62,6 +62,9 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
         Action::Drop(entity) => {
             systems::drop(actor, entity, state)
         },
+        Action::GetALotOfEnergy => {
+            systems::get_a_lot_of_energy(actor, state)
+        },
         Action::GainPower => {
             systems::gain_power(actor, state)
         },

@@ -43,6 +43,7 @@ pub fn make_default_key_bindings() -> KeyBindings {
     bindings.bind(VirtualKeyCode::X, Key::SwordFlurry);
     bindings.bind(VirtualKeyCode::G, Key::Get);
     bindings.bind(VirtualKeyCode::Comma, Key::Get);
+    bindings.bind(VirtualKeyCode::E, Key::GetALotOfEnergy);
     bindings.bind(VirtualKeyCode::P, Key::GainPower);
 
     bindings.bind(VirtualKeyCode::Z, Key::DoNothing);

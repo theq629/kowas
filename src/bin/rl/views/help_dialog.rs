@@ -19,7 +19,15 @@ pub fn make_help_dialog(key_bindings: &KeyBindings) -> DialogView<UiState, UiSta
     let text_lines: Vec<_> = bindings.iter()
         .map(|(ok, iks)| {
             let iks_str = iks.iter().map(|ik| input_key_name(*ik)).collect::<Vec<_>>().join(", ");
-            format!("{:<20} {}", ok.name(), iks_str)
+            format!(
+                "{:<25} {:<11} {}",
+                ok.name(),
+                match ok.needs_energy() {
+                    Some(e) => format!("({} energy)", e),
+                    None => "".to_string()
+                },
+                iks_str
+            )
         })
         .collect();
     let text = text_lines.join("\n");

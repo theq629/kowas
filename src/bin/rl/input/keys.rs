@@ -1,3 +1,6 @@
+use sevendrl_2021::game::directions::Direction;
+use sevendrl_2021::game::actions::Action;
+
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Key {
     DoNothing,
@@ -14,6 +17,7 @@ pub enum Key {
     SwordSlash,
     SwordWhirl,
     SwordFlurry,
+    GetALotOfEnergy,
     GainPower,
     Help,
     Quit
@@ -36,9 +40,19 @@ impl Key {
             Key::SwordSlash => "sword slash",
             Key::SwordWhirl => "sword whirl",
             Key::SwordFlurry => "sword flurry",
+            Key::GetALotOfEnergy => "get a lot of energy",
             Key::GainPower => "get more powerful",
             Key::Help => "help",
             Key::Quit => "quit",
+        }
+    }
+
+    pub fn needs_energy(self) -> Option<i32> {
+        match self {
+            Key::SwordSlash => Some(Action::SwordSlash(Direction::N).needs_energy()),
+            Key::SwordWhirl => Some(Action::SwordWhirl.needs_energy()),
+            Key::SwordFlurry => Some(Action::SwordFlurry(Direction::N).needs_energy()),
+            _ => None
         }
     }
 }

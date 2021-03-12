@@ -267,6 +267,9 @@ impl GameView {
             result_error(act(player, Action::Get, game_state));
         }
 
+        if input.is_pressed(Key::GetALotOfEnergy) {
+            result_error(act(player, Action::GetALotOfEnergy, game_state));
+        }
         if input.is_pressed(Key::GainPower) {
             result_error(act(player, Action::GainPower, game_state));
         }
