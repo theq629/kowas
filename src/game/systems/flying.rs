@@ -25,16 +25,23 @@ fn rotate_vec(vec: Point, angle: f32) -> Point {
     )
 }
 
-pub fn impact_shove(shovee: Entity, vel: Point, state: &mut GameState) {
-    let new_vel =
-        if state.rng.range(0, 100) < 50 {
-            vel
-        } else {
-            let angle = state.rng.range(-90, 90);
-            let angle = angle as f32 * (std::f32::consts::PI / 180.);
-            rotate_vec(vel, angle)
-        };
-    let _ = state.world.insert_one(shovee, Flying { velocity: new_vel });
+pub fn impact_shove(pos: Point, vel: Point, state: &mut GameState) {
+    let to_shove: Vec<_> = state.world.query::<(&Position, &mut Blocks)>()
+        .iter()
+        .filter(|(_, (p, _))| p.0 == pos)
+        .map(|(e, _)| e)
+        .collect();
+    for shovee in to_shove {
+        let new_vel =
+            if state.rng.range(0, 100) < 50 {
+                vel
+            } else {
+                let angle = state.rng.range(-90, 90);
+                let angle = angle as f32 * (std::f32::consts::PI / 180.);
+                rotate_vec(vel, angle)
+            };
+        result_error(state.world.insert_one(shovee, Flying { velocity: new_vel }));
+    }
 }
 
 pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> ChangeResult {
@@ -73,11 +80,11 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
             }
             remaining_dist /= 2;
         }
-        for (entity, _) in state.world.query::<(&Position, &Blocks)>()
+        for _ in state.world.query::<(&Position, &Blocks)>()
             .iter()
             .filter(|(e, (p, _))| *e != entity && p.0 == pos)
         {
-            collision = Some(entity);
+            collision = Some(pos);
             break 'posloop;
         }
         last_ok_pos = pos;
@@ -86,9 +93,9 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
     if let Ok(mut entity_pos) = state.world.get_mut::<Position>(entity) {
         entity_pos.0 = last_ok_pos;
     }
-    if let Some(collision) = collision {
-        let _ = collision_damage(entity, collision, vel_mag, state);
-        impact_shove(collision, vel / 2, state);
+    if let Some(pos) = collision {
+        let _ = collision_damage(entity, pos, vel_mag, state);
+        impact_shove(pos, vel / 2, state);
     }
 }
 
