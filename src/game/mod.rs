@@ -46,8 +46,11 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
         Action::Shove(dir) => {
             systems::shove_toward(actor, dir, state)
         },
-        Action::Slash(dir) => {
-            systems::slash_toward(actor, dir, state)
+        Action::SwordSlash(dir) => {
+            systems::sword::slash_toward(actor, dir, state)
+        },
+        Action::SwordWhirl => {
+            systems::sword::whirl(actor, state)
         },
         Action::Get => {
             systems::get(actor, state)

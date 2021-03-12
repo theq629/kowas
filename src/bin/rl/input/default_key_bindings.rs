@@ -38,7 +38,8 @@ pub fn make_default_key_bindings() -> KeyBindings {
     make_numpad_direction_bindings(&mut bindings);
 
     bindings.bind(VirtualKeyCode::S, Key::Shove);
-    bindings.bind(VirtualKeyCode::A, Key::Slash);
+    bindings.bind(VirtualKeyCode::A, Key::SwordSlash);
+    bindings.bind(VirtualKeyCode::Z, Key::SwordWhirl);
     bindings.bind(VirtualKeyCode::G, Key::Get);
     bindings.bind(VirtualKeyCode::Comma, Key::Get);
     bindings.bind(VirtualKeyCode::P, Key::GainPower);

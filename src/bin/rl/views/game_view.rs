@@ -17,7 +17,7 @@ use super::cell_info::cell_info;
 enum InputMode {
     Move,
     Shove,
-    Slash
+    SwordSlash
 }
 
 pub struct GameView {
@@ -115,7 +115,7 @@ impl GameView {
             InputMode::Shove => {
                 ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to shove");
             },
-            InputMode::Slash => {
+            InputMode::SwordSlash => {
                 ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to slash");
             }
         }
@@ -215,7 +215,7 @@ impl GameView {
     fn handle_slash_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act(player, Action::Slash(dir), game_state))
+            result_error(act(player, Action::SwordSlash(dir), game_state))
         });
     }
 
@@ -231,13 +231,16 @@ impl GameView {
             InputMode::Shove => {
                 self.handle_shove_input(player, game_state, input)
             },
-            InputMode::Slash => {
+            InputMode::SwordSlash => {
                 self.handle_slash_input(player, game_state, input)
             }
         }
 
-        if input.is_pressed(Key::Slash) {
-            self.input_mode = InputMode::Slash;
+        if input.is_pressed(Key::SwordSlash) {
+            self.input_mode = InputMode::SwordSlash;
+        }
+        if input.is_pressed(Key::SwordWhirl) {
+            result_error(act(player, Action::SwordWhirl, game_state));
         }
         if input.is_pressed(Key::Shove) {
             self.input_mode = InputMode::Shove;
