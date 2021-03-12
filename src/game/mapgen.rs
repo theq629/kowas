@@ -87,7 +87,7 @@ pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
     let liquids = TileMap::new(dim, |_| None);
 
     let player = things::player(Point::new(dim.x / 2, dim.y / 2), &mut world);
-    for _ in 0..300 {
+    for _ in 0..500 {
         let pos = Point::new(
             rng.range(0, dim.x),
             rng.range(0, dim.y)
@@ -96,7 +96,7 @@ pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
             things::goblin(pos, &mut world);
         }
     }
-    for _ in 0..100 {
+    for _ in 0..200 {
         let pos = Point::new(
             rng.range(0, dim.x),
             rng.range(0, dim.y)
