@@ -12,6 +12,11 @@ const WIDTH: i32 = 80;
 const HEIGHT: i32 = 40;
 
 fn main() -> BError {
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        env_logger::init();
+    }
+
     let context = BTermBuilder::new()
         .with_title(branding::TITLE)
         .with_font("terminal8x8.png", 8u32, 8u32)

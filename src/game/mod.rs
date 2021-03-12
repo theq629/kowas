@@ -9,6 +9,7 @@ mod things;
 mod systems;
 mod state;
 
+use log::debug;
 use hecs::{World, Entity};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
@@ -61,14 +62,18 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
 }
 
 pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
+    debug!("acting");
     dispatch_action(actor, action, state).and_then(|ok| {
+        debug!("updating flying");
         systems::update_flying(state);
+        debug!("checking deaths");
         systems::check_deaths(state);
         if let Some(player) = state.player {
             if !state.world.contains(player) {
                 state.player = None;
             }
         }
+        debug!("done updates");
         Ok(ok)
     })
 }
