@@ -16,7 +16,18 @@ fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> C
     Ok(ChangeOk)
 }
 
+fn rotate_vec(vec: Point, angle: f32) -> Point {
+    let x = vec.x as f32;
+    let y = vec.y as f32;
+    Point::new(
+        (x * f32::cos(angle) - y * f32::sin(angle)).round() as i32,
+        (x * f32::sin(angle) + y * f32::cos(angle)).round() as i32
+    )
+}
+
 pub fn impact_shove(shovee: Entity, vel: Point, state: &mut GameState) {
+    let angle = state.rng.range(-90, 90) as f32 * (std::f32::consts::PI / 180.);
+    let vel = rotate_vec(vel, angle);
     let _ = state.world.insert_one(shovee, Flying { velocity: vel });
 }
 
