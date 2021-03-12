@@ -10,6 +10,7 @@ pub enum Action {
     Shove(Direction),
     SwordSlash(Direction),
     SwordWhirl,
+    SwordFlurry(Direction),
     Get,
     Drop(Entity),
     GainPower

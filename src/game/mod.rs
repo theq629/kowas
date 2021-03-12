@@ -52,6 +52,9 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
         Action::SwordWhirl => {
             systems::sword::whirl(actor, state)
         },
+        Action::SwordFlurry(dir) => {
+            systems::sword::flurry_toward(actor, dir, state)
+        },
         Action::Get => {
             systems::get(actor, state)
         },

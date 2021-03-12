@@ -66,3 +66,29 @@ pub fn whirl(attacker: Entity, state: &mut GameState) -> ChangeResult {
     do_whirl(attacker_pos, attacker_power, state)?;
     Ok(ChangeOk)
 }
+
+fn do_flurry(centre: Point, dir: Direction, power: i32, state: &mut GameState) -> ChangeResult {
+    let half_width = 2;
+    let depth = 1 + power / 4;
+    let damage = power;
+    for d in 0..(depth + 1) {
+        let pos0 = centre + dir.to_point() * d;
+        let pos1 = pos0 + dir.perpendicular().to_point() * half_width;
+        let pos2 = pos0 + dir.perpendicular().to_point() * -half_width;
+        for pos in VectorLine::new(pos1, pos2) {
+            if pos != centre {
+                make_particle(pos, Graphic::DamageEffect, state);
+                let _ = melee_damage(pos, damage, state);
+                impact_shove(pos, (pos - centre) * damage, state);
+            }
+        }
+    }
+    Ok(ChangeOk)
+}
+
+pub fn flurry_toward(attacker: Entity, dir: Direction, state: &mut GameState) -> ChangeResult {
+    let attacker_pos = state.world.get::<Position>(attacker)?.0;
+    let attacker_power = state.world.get::<Power>(attacker)?.0;
+    do_flurry(attacker_pos, dir, attacker_power, state)?;
+    Ok(ChangeOk)
+}

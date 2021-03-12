@@ -26,4 +26,17 @@ impl Direction {
             Direction::SW => Point::new(-1, 1)
         }
     }
+
+    pub fn perpendicular(self) -> Direction {
+        match self {
+            Direction::N => Direction::E,
+            Direction::S => Direction::E,
+            Direction::E => Direction::N,
+            Direction::W => Direction::N,
+            Direction::NE => Direction::NW,
+            Direction::NW => Direction::NE,
+            Direction::SE => Direction::SW,
+            Direction::SW => Direction::SE
+        }
+    }
 }

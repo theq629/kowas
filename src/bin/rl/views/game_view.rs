@@ -17,7 +17,8 @@ use super::cell_info::cell_info;
 enum InputMode {
     Move,
     Shove,
-    SwordSlash
+    SwordSlash,
+    SwordFlurry
 }
 
 pub struct GameView {
@@ -117,6 +118,9 @@ impl GameView {
             },
             InputMode::SwordSlash => {
                 ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to slash");
+            },
+            InputMode::SwordFlurry => {
+                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to flurry");
             }
         }
     }
@@ -219,6 +223,13 @@ impl GameView {
         });
     }
 
+    fn handle_flurry_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+        handle_directional_action_input(input, |dir| {
+            self.input_mode = InputMode::Move;
+            result_error(act(player, Action::SwordFlurry(dir), game_state))
+        });
+    }
+
     fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
         if input.is_pressed(Key::DoNothing) {
             result_error(act(player, Action::DoNothing, game_state));
@@ -233,6 +244,9 @@ impl GameView {
             },
             InputMode::SwordSlash => {
                 self.handle_slash_input(player, game_state, input)
+            },
+            InputMode::SwordFlurry => {
+                self.handle_flurry_input(player, game_state, input)
             }
         }
 
@@ -241,6 +255,9 @@ impl GameView {
         }
         if input.is_pressed(Key::SwordWhirl) {
             result_error(act(player, Action::SwordWhirl, game_state));
+        }
+        if input.is_pressed(Key::SwordFlurry) {
+            self.input_mode = InputMode::SwordFlurry;
         }
         if input.is_pressed(Key::Shove) {
             self.input_mode = InputMode::Shove;

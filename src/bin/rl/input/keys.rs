@@ -13,6 +13,7 @@ pub enum Key {
     Shove,
     SwordSlash,
     SwordWhirl,
+    SwordFlurry,
     GainPower,
     Help,
     Quit
@@ -34,6 +35,7 @@ impl Key {
             Key::Shove => "shove",
             Key::SwordSlash => "sword slash",
             Key::SwordWhirl => "sword whirl",
+            Key::SwordFlurry => "sword flurry",
             Key::GainPower => "get more powerful",
             Key::Help => "help",
             Key::Quit => "quit",
