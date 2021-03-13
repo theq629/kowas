@@ -55,6 +55,9 @@ impl Key {
 
     pub fn needs_energy(self) -> Option<i32> {
         match self {
+            Key::Shove => Some(Action::Shove(Direction::N).needs_energy()),
+            Key::ThrowOff => Some(Action::ThrowOff.needs_energy()),
+            Key::Heal => Some(Action::Heal.needs_energy()),
             Key::SwordSlash => Some(Action::SwordSlash(Direction::N).needs_energy()),
             Key::SwordWhirl => Some(Action::SwordWhirl.needs_energy()),
             Key::SwordFlurry => Some(Action::SwordFlurry(Direction::N).needs_energy()),
