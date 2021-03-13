@@ -34,14 +34,17 @@ impl Room {
 
 struct TerrainPather<'a> {
     terrain: &'a TileMap<Terrain>,
+    solid_weight: f32,
     rubble_weight: f32
 }
 
 impl <'a> TerrainPather<'a> {
     pub fn new(terrain: &'a TileMap<Terrain>) -> Self {
+        let rubble_weight = (terrain.dim.x + terrain.dim.y) as f32;
         Self {
             terrain: terrain,
-            rubble_weight: (terrain.dim.x + terrain.dim.y) as f32
+            solid_weight: rubble_weight * rubble_weight,
+            rubble_weight: rubble_weight
         }
     }
 }
@@ -52,13 +55,11 @@ impl<'a> BaseMap for TerrainPather<'a> {
         let y = idx as i32 / self.terrain.dim.x;
         let mut exits = SmallVec::new();
 
-        if self.terrain[idx].is_solid() {
-            return exits;
-        }
-
         let weight =
             if self.terrain[idx] == Terrain::Rubble {
                 self.rubble_weight
+            } else if self.terrain[idx].is_solid() {
+                self.solid_weight
             } else {
                 1.0
             };
