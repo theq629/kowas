@@ -12,6 +12,8 @@ mod particles;
 pub mod sword;
 mod structures;
 mod winning_losing;
+mod monster_ai;
+mod actions;
 
 pub use change::{ChangeResult, ChangeOk, ChangeErr};
 pub use do_nothing::do_nothing;
@@ -23,3 +25,5 @@ pub use flying::{update_flying, shove_toward};
 pub use debug::{get_a_lot_of_energy, gain_power};
 pub use particles::tick_particles;
 pub use winning_losing::check_win_lose;
+pub use monster_ai::act_monsters;
+pub use actions::act;

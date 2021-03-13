@@ -1,9 +1,8 @@
 use std::cmp::{max, min};
 use bracket_terminal::prelude::*;
-use hecs::Entity;
 use sevendrl_2021::log_err::result_error;
 use sevendrl_2021::bracket_views::{Input, View};
-use sevendrl_2021::game::{GameState, GameStatus, act, visual_tick};
+use sevendrl_2021::game::{GameState, GameStatus, act_player, visual_tick};
 use sevendrl_2021::game::graphics::Graphic;
 use sevendrl_2021::game::liquids::Liquid;
 use sevendrl_2021::game::components::{Position, Renderable, Health, Power, Energy};
@@ -200,53 +199,53 @@ impl GameView {
         }
     }
 
-    fn handle_move_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+    fn handle_move_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
-            let res = act(player, Action::MeleeAttack(dir), game_state).or_else(|_| {
-                act(player, Action::Move(dir), game_state)
+            let res = act_player(Action::MeleeAttack(dir), game_state).or_else(|_| {
+                act_player(Action::Move(dir), game_state)
             });
             result_error(res);
         });
     }
 
-    fn handle_shove_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+    fn handle_shove_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act(player, Action::Shove(dir), game_state))
+            result_error(act_player(Action::Shove(dir), game_state))
         });
     }
 
-    fn handle_slash_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+    fn handle_slash_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act(player, Action::SwordSlash(dir), game_state))
+            result_error(act_player(Action::SwordSlash(dir), game_state))
         });
     }
 
-    fn handle_flurry_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+    fn handle_flurry_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act(player, Action::SwordFlurry(dir), game_state))
+            result_error(act_player(Action::SwordFlurry(dir), game_state))
         });
     }
 
-    fn handle_action_input(&mut self, player: Entity, game_state: &mut GameState, input: &InputImpl) {
+    fn handle_action_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         if input.is_pressed(Key::DoNothing) {
-            result_error(act(player, Action::DoNothing, game_state));
+            result_error(act_player(Action::DoNothing, game_state));
         }
 
         match self.input_mode {
             InputMode::Move => {
-                self.handle_move_input(player, game_state, input)
+                self.handle_move_input(game_state, input)
             },
             InputMode::Shove => {
-                self.handle_shove_input(player, game_state, input)
+                self.handle_shove_input(game_state, input)
             },
             InputMode::SwordSlash => {
-                self.handle_slash_input(player, game_state, input)
+                self.handle_slash_input(game_state, input)
             },
             InputMode::SwordFlurry => {
-                self.handle_flurry_input(player, game_state, input)
+                self.handle_flurry_input(game_state, input)
             }
         }
 
@@ -254,7 +253,7 @@ impl GameView {
             self.input_mode = InputMode::SwordSlash;
         }
         if input.is_pressed(Key::SwordWhirl) {
-            result_error(act(player, Action::SwordWhirl, game_state));
+            result_error(act_player(Action::SwordWhirl, game_state));
         }
         if input.is_pressed(Key::SwordFlurry) {
             self.input_mode = InputMode::SwordFlurry;
@@ -264,22 +263,20 @@ impl GameView {
         }
 
         if input.is_pressed(Key::Get) {
-            result_error(act(player, Action::Get, game_state));
+            result_error(act_player(Action::Get, game_state));
         }
 
         if input.is_pressed(Key::GetALotOfEnergy) {
-            result_error(act(player, Action::GetALotOfEnergy, game_state));
+            result_error(act_player(Action::GetALotOfEnergy, game_state));
         }
         if input.is_pressed(Key::GainPower) {
-            result_error(act(player, Action::GainPower, game_state));
+            result_error(act_player(Action::GainPower, game_state));
         }
     }
 
     fn handle_input(&mut self, state: &mut UiState, input: &InputImpl) -> Option<UiStateAction> {
         if let Some(game_state) = &mut state.game_state {
-            if let Some(player) = game_state.player {
-                self.handle_action_input(player, game_state, input);
-            }
+            self.handle_action_input(game_state, input);
         }
 
         if input.is_pressed(Key::Help) {
