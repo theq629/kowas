@@ -54,7 +54,7 @@ pub fn make_default_key_bindings() -> KeyBindings {
         bindings.bind(VirtualKeyCode::P, Key::GainPower);
     }
 
-    bindings.bind(VirtualKeyCode::Z, Key::DoNothing);
+    bindings.bind(VirtualKeyCode::Space, Key::DoNothing);
     bindings.bind(VirtualKeyCode::Period, Key::DoNothing);
 
     bindings.bind(VirtualKeyCode::Slash, Key::Help);
