@@ -2,13 +2,12 @@ use bracket_geometry::prelude::{Point, VectorLine};
 use hecs::Entity;
 use crate::log_err::result_error;
 use crate::game::state::GameState;
-use crate::game::directions::Direction;
 use crate::game::components::{Position, Flying, Blocks, Power};
-use super::change::{ChangeResult, ChangeOk, ChangeErr};
+use super::change::{ChangeResult, ChangeOk};
 use super::damage::{collision_damage, terrain_collision_damage};
 use super::structures::impact;
 
-fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
+pub fn shove(shover: Entity, shovee: Entity, dir: Point, state: &mut GameState) -> ChangeResult {
     let shover_power = state.world.get::<Power>(shover)?.0;
     let _ = state.world.insert_one(shovee, Flying { velocity: Point::zero() });
     let mut shovee_flying = state.world.get_mut::<Flying>(shovee)?;
@@ -42,24 +41,6 @@ pub fn impact_shove(pos: Point, vel: Point, state: &mut GameState) {
             };
         result_error(state.world.insert_one(shovee, Flying { velocity: new_vel }));
     }
-}
-
-pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> ChangeResult {
-    let pos = state.world.get::<Position>(shover)?.0.clone();
-    let target_pos = pos + dir.to_point();
-
-    let targets: Vec<_> = state.world.query::<(&Position,)>()
-        .iter()
-        .filter(|(_, (p,))| p.0 == target_pos)
-        .map(|(e, _)| e)
-        .collect();
-    for target in targets {
-        if state.world.get::<Blocks>(target).is_ok() {
-            return shove(shover, target, dir.to_point(), state);
-        }
-    }
-
-    Err(ChangeErr)
 }
 
 fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState) {

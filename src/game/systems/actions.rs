@@ -17,7 +17,10 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
             super::melee_attack_toward(actor, dir, state)
         },
         Action::Shove(dir) => {
-            super::shove_toward(actor, dir, state)
+            super::body::shove_toward(actor, dir, state)
+        },
+        Action::ThrowOff => {
+            super::body::throw_off(actor, state)
         },
         Action::SwordSlash(dir) => {
             super::sword::slash_toward(actor, dir, state)

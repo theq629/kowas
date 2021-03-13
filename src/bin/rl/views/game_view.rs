@@ -259,6 +259,9 @@ impl GameView {
         if input.is_pressed(Key::Shove) {
             self.input_mode = InputMode::Shove;
         }
+        if input.is_pressed(Key::ThrowOff) {
+            result_error(act_player(Action::ThrowOff, game_state));
+        }
 
         if input.is_pressed(Key::Get) {
             result_error(act_player(Action::Get, game_state));

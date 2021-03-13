@@ -45,6 +45,10 @@ pub fn make_ascii() -> EnumMap<Graphic, BracketGraphic> {
             glyph: to_cp437('O'),
             colour: RGB::named(BLUE)
         },
+        Graphic::ShoveEffect => BracketGraphic {
+            glyph: to_cp437('!'),
+            colour: RGB::named(BLUE)
+        },
         Graphic::DamageEffect => BracketGraphic {
             glyph: to_cp437('!'),
             colour: RGB::named(RED)
