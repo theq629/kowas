@@ -42,10 +42,10 @@ pub fn orc(pos: Point, world: &mut World) -> Entity {
     ))
 }
 
-pub fn big_orc(pos: Point, world: &mut World) -> Entity {
+pub fn ogre(pos: Point, world: &mut World) -> Entity {
     world.spawn((
         components::Position(pos),
-        components::Renderable(Graphic::BigOrc),
+        components::Renderable(Graphic::Ogre),
         components::Blocks,
         components::Health::new(50),
         components::ProvidesEnergy(10),

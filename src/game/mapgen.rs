@@ -323,8 +323,8 @@ fn spawn_enemies(dim: Point, reserved_poses: &Vec<Point>, terrain: &TileMap<Terr
     spawn_enemies_group(500, things::goblin, dim, &mut reserved_poses, terrain, world, rng);
     let orc_max_y = slice_size * (num_slices - 1);
     spawn_enemies_group(200, things::orc, Point::new(dim.x, orc_max_y), &mut reserved_poses, terrain, world, rng);
-    let big_orc_max_y = slice_size * (num_slices / 2);
-    spawn_enemies_group(100, things::big_orc, Point::new(dim.x, big_orc_max_y), &mut reserved_poses, terrain, world, rng);
+    let ogre_max_y = slice_size * (num_slices / 2);
+    spawn_enemies_group(100, things::ogre, Point::new(dim.x, ogre_max_y), &mut reserved_poses, terrain, world, rng);
 }
 
 pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
