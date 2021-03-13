@@ -56,6 +56,9 @@ pub struct IsPlayerGoal;
 #[derive(Clone, Serialize, Deserialize)]
 pub struct IsAi;
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Speed(pub u32);
+
 serialize_components!(
     Position,
     Renderable,
@@ -68,5 +71,6 @@ serialize_components!(
     ProvidesEnergy,
     IsPlayer,
     IsPlayerGoal,
-    IsAi
+    IsAi,
+    Speed
 );

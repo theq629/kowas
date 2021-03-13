@@ -7,7 +7,7 @@ use crate::game::state::GameState;
 use crate::game::directions::Direction;
 use crate::game::terrain::Terrain;
 use crate::game::actions::Action;
-use crate::game::components::{Position, IsAi};
+use crate::game::components::{Position, Speed, IsAi};
 use super::change::{ChangeResult, ChangeOk};
 
 struct TerrainPather<'a> {
@@ -146,8 +146,9 @@ fn act_monsters_without_player(monsters: Vec<Entity>, state: &mut GameState) -> 
 pub fn act_monsters(state: &mut GameState) {
     debug!("starting monster ai");
 
-    let monsters: Vec<_> = state.world.query::<&IsAi>()
+    let monsters: Vec<_> = state.world.query::<(&IsAi, &Speed)>()
         .iter()
+        .filter(|(_, (_, s))| state.turn % s.0 == 0)
         .map(|(e, _)| e)
         .collect();
 

@@ -37,6 +37,7 @@ pub fn orc(pos: Point, world: &mut World) -> Entity {
         components::Health::new(5),
         components::ProvidesEnergy(5),
         components::Power(5),
+        components::Speed(3),
         components::IsAi
     ))
 }
@@ -49,6 +50,7 @@ pub fn orc_lord(pos: Point, world: &mut World) -> Entity {
         components::Health::new(10),
         components::ProvidesEnergy(1000),
         components::Power(10),
+        components::Speed(1),
         components::IsAi,
         components::IsPlayerGoal
     ))

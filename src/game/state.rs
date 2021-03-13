@@ -22,7 +22,8 @@ pub struct GameState {
     pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
     pub rng: RandomNumberGenerator,
-    pub status: GameStatus
+    pub status: GameStatus,
+    pub turn: u32
 }
 
 struct SaveWorld<'a> {
@@ -40,7 +41,8 @@ struct SaveGameState<'a> {
     pub liquids: &'a TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
     pub rng: &'a RandomNumberGenerator,
-    pub status: GameStatus
+    pub status: GameStatus,
+    pub turn: u32
 }
 
 #[derive(Deserialize)]
@@ -50,7 +52,8 @@ struct LoadGameState {
     pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
     pub rng: RandomNumberGenerator,
-    pub status: GameStatus
+    pub status: GameStatus,
+    pub turn: u32
 }
 
 impl GameState {
@@ -85,7 +88,8 @@ impl <'a> SaveGameState<'a> {
             liquids: &state.liquids,
             player: state.player,
             rng: &state.rng,
-            status: state.status
+            status: state.status,
+            turn: state.turn
         }
     }
 }
@@ -99,7 +103,8 @@ impl LoadGameState {
             liquids: self.liquids,
             player: self.player,
             rng: self.rng,
-            status: self.status
+            status: self.status,
+            turn: self.turn
         }
     }
 }

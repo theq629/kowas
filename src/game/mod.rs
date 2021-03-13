@@ -29,7 +29,8 @@ pub fn new_game() -> GameState {
         liquids: gened.liquids,
         player: gened.player,
         rng: rng,
-        status: GameStatus::Playing
+        status: GameStatus::Playing,
+        turn: 0
     }
 }
 
@@ -38,6 +39,7 @@ pub fn act_player(action: Action, state: &mut GameState) -> ChangeResult {
         debug!("acting for player");
         systems::act(player, action, state)?;
         systems::act_monsters(state);
+        state.turn += 1;
         Ok(ChangeOk)
     } else {
         Err(ChangeErr)
