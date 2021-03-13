@@ -23,6 +23,13 @@ impl <T> TileMap<T> {
         }
     }
 
+    pub fn is_valid(&self, pos: Point) -> bool {
+        pos.x >= 0
+            && pos.y >= 0
+            && pos.x < self.dim.x
+            && pos.y < self.dim.y
+    }
+
     pub fn to_location(&self, pos: Point) -> TileMapLocation {
         (pos.y * self.dim.x + pos.x) as usize
     }

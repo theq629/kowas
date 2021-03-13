@@ -10,7 +10,9 @@ fn destroy_radius(centre: Point, radius: i32, state: &mut GameState) {
     for dx in (-radius)..(radius + 1) {
         for dy in (-radius)..(radius + 1) {
             let pos = Point::new(centre.x + dx, centre.y + dy);
-            destroy(pos, state);
+            if state.terrain.is_valid(pos) {
+                destroy(pos, state);
+            }
         }
     }
 }
