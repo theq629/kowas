@@ -38,10 +38,11 @@ pub fn make_default_key_bindings() -> KeyBindings {
     make_numpad_direction_bindings(&mut bindings);
 
     bindings.bind(VirtualKeyCode::S, Key::Shove);
-    bindings.bind(VirtualKeyCode::D, Key::ThrowOff);
-    bindings.bind(VirtualKeyCode::A, Key::SwordSlash);
-    bindings.bind(VirtualKeyCode::Z, Key::SwordFlurry);
-    bindings.bind(VirtualKeyCode::X, Key::SwordWhirl);
+    bindings.bind(VirtualKeyCode::A, Key::ThrowOff);
+    bindings.bind(VirtualKeyCode::D, Key::Heal);
+    bindings.bind(VirtualKeyCode::Z, Key::SwordSlash);
+    bindings.bind(VirtualKeyCode::X, Key::SwordFlurry);
+    bindings.bind(VirtualKeyCode::C, Key::SwordWhirl);
     bindings.bind(VirtualKeyCode::G, Key::Get);
     bindings.bind(VirtualKeyCode::Comma, Key::Get);
 

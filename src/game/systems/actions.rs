@@ -22,6 +22,9 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
         Action::ThrowOff => {
             super::body::throw_off(actor, state)
         },
+        Action::Heal => {
+            super::body::heal(actor, state)
+        },
         Action::SwordSlash(dir) => {
             super::sword::slash_toward(actor, dir, state)
         },

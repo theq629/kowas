@@ -3,7 +3,7 @@ use hecs::Entity;
 use crate::game::state::GameState;
 use crate::game::directions::Direction;
 use crate::game::graphics::Graphic;
-use crate::game::components::{Position, Power, Blocks};
+use crate::game::components::{Position, Power, Blocks, Health};
 use super::change::{ChangeResult, ChangeOk, ChangeErr};
 use super::flying::impact_shove;
 use super::particles::make_particle;
@@ -53,5 +53,11 @@ pub fn throw_off(attacker: Entity, state: &mut GameState) -> ChangeResult {
     let attacker_pos = state.world.get::<Position>(attacker)?.0;
     let attacker_power = state.world.get::<Power>(attacker)?.0;
     do_throw_off(attacker_pos, attacker_power, state)?;
+    Ok(ChangeOk)
+}
+
+pub fn heal(healee: Entity, state: &mut GameState) -> ChangeResult {
+    let mut healee_health = state.world.get_mut::<Health>(healee)?;
+    healee_health.value += 10;
     Ok(ChangeOk)
 }

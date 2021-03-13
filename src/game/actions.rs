@@ -9,6 +9,7 @@ pub enum Action {
     MeleeAttack(Direction),
     Shove(Direction),
     ThrowOff,
+    Heal,
     SwordSlash(Direction),
     SwordWhirl,
     SwordFlurry(Direction),
@@ -24,6 +25,7 @@ impl Action {
         match self {
             Action::Shove(_) => 1,
             Action::ThrowOff => 3,
+            Action::Heal => 10,
             Action::SwordSlash(_) => 3,
             Action::SwordWhirl => 5,
             Action::SwordFlurry(_) => 2,
