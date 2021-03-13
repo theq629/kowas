@@ -70,6 +70,8 @@ impl<'a> BaseMap for TerrainPather<'a> {
 }
 
 fn act_monsters_with_player(player: Entity, mut monsters: Vec<Entity>, state: &mut GameState) -> ChangeResult {
+    let act_range_from_player2 = 32 * 32;
+
     let player_pos = state.world.get::<Position>(player)?.0;
 
     let player_loc = state.terrain.to_location(player_pos);
@@ -96,6 +98,11 @@ fn act_monsters_with_player(player: Entity, mut monsters: Vec<Entity>, state: &m
     let moves: Vec<_> = monsters.iter()
         .map(|monster| {
             state.world.get::<Position>(*monster).ok().map(|monster_pos| {
+                let d = monster_pos.0 - player_pos;
+                let dist_to_player2 = d.x * d.x + d.y * d.y;
+                if dist_to_player2 > act_range_from_player2 {
+                    return None;
+                }
                 let mut best_score = std::f32::MAX;
                 let mut best_dir = None;
                 for dir in Direction::ALL.iter() {
