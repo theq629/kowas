@@ -2,7 +2,7 @@ use crate::state::{UiState, UiStateAction};
 use super::{DialogView, DialogChoice};
 
 const TITLE: &'static str = "Welcome";
-const TEXT: &'static str = "Press slash for help. Mouse around for tooltips.";
+const TEXT: &'static str = "You must defeat the orc lord.\n\nPress slash for help. Mouse around for tooltips.";
 
 pub fn make_intro_dialog() -> DialogView<UiState, UiStateAction> {
 DialogView::new(
