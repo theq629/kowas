@@ -40,8 +40,8 @@ pub fn make_default_key_bindings() -> KeyBindings {
     bindings.bind(VirtualKeyCode::S, Key::Shove);
     bindings.bind(VirtualKeyCode::D, Key::ThrowOff);
     bindings.bind(VirtualKeyCode::A, Key::SwordSlash);
-    bindings.bind(VirtualKeyCode::Z, Key::SwordWhirl);
-    bindings.bind(VirtualKeyCode::X, Key::SwordFlurry);
+    bindings.bind(VirtualKeyCode::Z, Key::SwordFlurry);
+    bindings.bind(VirtualKeyCode::X, Key::SwordWhirl);
     bindings.bind(VirtualKeyCode::G, Key::Get);
     bindings.bind(VirtualKeyCode::Comma, Key::Get);
 
