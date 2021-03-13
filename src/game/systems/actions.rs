@@ -8,45 +8,59 @@ use super::change::{ChangeResult, ChangeOk, ChangeErr};
 fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult {
     match action {
         Action::DoNothing => {
+            debug!("do nothing");
             super::do_nothing(actor)
         },
         Action::Move(dir) => {
+            debug!("move");
             super::move_entity(actor, dir, state)
         },
         Action::MeleeAttack(dir) => {
+            debug!("melee attack");
             super::melee_attack_toward(actor, dir, state)
         },
         Action::Shove(dir) => {
+            debug!("shove");
             super::body::shove_toward(actor, dir, state)
         },
         Action::ThrowOff => {
+            debug!("throw off");
             super::body::throw_off(actor, state)
         },
         Action::Heal => {
+            debug!("heal");
             super::body::heal(actor, state)
         },
         Action::SwordSlash(dir) => {
+            debug!("sword slash");
             super::sword::slash_toward(actor, dir, state)
         },
         Action::SwordWhirl => {
+            debug!("sword whirl");
             super::sword::whirl(actor, state)
         },
         Action::SwordFlurry(dir) => {
+            debug!("sword flurry");
             super::sword::flurry_toward(actor, dir, state)
         },
         Action::Get => {
+            debug!("get");
             super::get(actor, state)
         },
         Action::Drop(entity) => {
+            debug!("drop");
             super::drop(actor, entity, state)
         },
         Action::GetALotOfEnergy => {
+            debug!("get a lot of energy");
             super::get_a_lot_of_energy(actor, state)
         },
         Action::GetALotOfHealth => {
+            debug!("get a lot of health");
             super::get_a_lot_of_health(actor, state)
         },
         Action::GainPower => {
+            debug!("gain power");
             super::gain_power(actor, state)
         },
     }
