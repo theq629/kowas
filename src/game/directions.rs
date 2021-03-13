@@ -14,7 +14,18 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn to_point(&self) -> Point{
+    pub const ALL: [Self; 8] = [
+        Direction::N,
+        Direction::S,
+        Direction::E,
+        Direction::W,
+        Direction::NE,
+        Direction::NW,
+        Direction::SE,
+        Direction::SW
+    ];
+
+    pub fn to_point(&self) -> Point {
         match self {
             Direction::N => Point::new(0, -1),
             Direction::S => Point::new(0, 1),
@@ -24,6 +35,20 @@ impl Direction {
             Direction::NW => Point::new(-1, -1),
             Direction::SE => Point::new(1, 1),
             Direction::SW => Point::new(-1, 1)
+        }
+    }
+
+    pub fn of_point(point: Point) -> Option<Self> {
+        match (point.x, point.y) {
+            (0, -1) => Some(Direction::N),
+            (0, 1) => Some(Direction::S),
+            (1, 0) => Some(Direction::E),
+            (-1, 0) => Some(Direction::W),
+            (1, -1) => Some(Direction::NE),
+            (-1, -1) => Some(Direction::NW),
+            (1, 1) => Some(Direction::SE),
+            (-1, 1) => Some(Direction::SW),
+            _ => None
         }
     }
 

@@ -23,6 +23,7 @@ pub fn goblin(pos: Point, world: &mut World) -> Entity {
         components::Blocks,
         components::Health::new(1),
         components::ProvidesEnergy(1),
+        components::Power(1),
         components::IsAi
     ))
 }
@@ -34,6 +35,7 @@ pub fn orc(pos: Point, world: &mut World) -> Entity {
         components::Blocks,
         components::Health::new(5),
         components::ProvidesEnergy(5),
+        components::Power(5),
         components::IsAi
     ))
 }
@@ -45,6 +47,7 @@ pub fn orc_lord(pos: Point, world: &mut World) -> Entity {
         components::Blocks,
         components::Health::new(10),
         components::ProvidesEnergy(1000),
+        components::Power(10),
         components::IsAi,
         components::IsPlayerGoal
     ))
