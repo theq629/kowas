@@ -11,7 +11,8 @@ pub fn player(pos: Point, world: &mut World) -> Entity {
         components::Health::new(20),
         components::Inventory(Vec::new()),
         components::Power(1),
-        components::Energy { value: 10 }
+        components::Energy { value: 10 },
+        components::IsPlayer
     ))
 }
 

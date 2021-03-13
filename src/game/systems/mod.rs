@@ -11,7 +11,7 @@ mod damage;
 mod particles;
 pub mod sword;
 mod structures;
-mod winning;
+mod winning_losing;
 
 pub use change::{ChangeResult, ChangeOk, ChangeErr};
 pub use do_nothing::do_nothing;
@@ -22,4 +22,4 @@ pub use death::check_deaths;
 pub use flying::{update_flying, shove_toward};
 pub use debug::{get_a_lot_of_energy, gain_power};
 pub use particles::tick_particles;
-pub use winning::check_win;
+pub use winning_losing::check_win_lose;

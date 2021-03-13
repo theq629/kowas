@@ -48,6 +48,9 @@ pub struct Energy {
 pub struct ProvidesEnergy(pub i32);
 
 #[derive(Clone, Serialize, Deserialize)]
+pub struct IsPlayer;
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct IsPlayerGoal;
 
 serialize_components!(
@@ -60,5 +63,6 @@ serialize_components!(
     Power,
     Energy,
     ProvidesEnergy,
+    IsPlayer,
     IsPlayerGoal
 );

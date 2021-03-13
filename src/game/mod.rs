@@ -92,8 +92,8 @@ pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult
     run_action(actor, action, state).and_then(|ok| {
         debug!("updating flying");
         systems::update_flying(state);
-        debug!("checking win");
-        systems::check_win(state);
+        debug!("checking win or lose");
+        systems::check_win_lose(state);
         debug!("checking deaths");
         systems::check_deaths(state);
         if let Some(player) = state.player {

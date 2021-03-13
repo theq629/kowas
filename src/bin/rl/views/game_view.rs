@@ -297,8 +297,14 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
     fn tick(&mut self, state: &mut UiState, input: &InputImpl, ctx: &mut BTerm) -> Option<UiStateAction> {
         ctx.cls();
         if let Some(game_state) = &mut state.game_state {
-            if game_state.status == GameStatus::Won {
-                return Some(UiStateAction::WinGameAndMainMenu);
+            match game_state.status {
+                GameStatus::Won => {
+                    return Some(UiStateAction::WinGameAndMainMenu);
+                },
+                GameStatus::Lost => {
+                    return Some(UiStateAction::LoseGameAndMainMenu);
+                },
+                _ => {}
             }
             visual_tick(game_state);
             if let Some(player) = game_state.player {

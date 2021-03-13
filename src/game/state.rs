@@ -11,7 +11,8 @@ use super::components::ComponentSerializationContext;
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Enum, Serialize, Deserialize)]
 pub enum GameStatus {
     Playing,
-    Won
+    Won,
+    Lost
 }
 
 pub struct GameState {
