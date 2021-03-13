@@ -1,0 +1,15 @@
+set -e
+
+cargo build --release
+
+name=kowas
+target=~/.cache/cargo/target/release/$name
+tardest=$PWD/$name.tar.gz
+
+temp=$(mktemp -d)
+trap "rm -rf '$temp'" EXIT
+
+cd "$temp"
+cp -r "$target" $name
+tar -czvf "$tardest" "$name"
+echo "tar at $tardest" 1>&2
