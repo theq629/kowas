@@ -3,6 +3,7 @@ set -e
 name=kowas
 target=~/.cache/cargo/target
 dest=$target/web
+zipdest=$PWD/web/kowas-web.zip
 
 target=$target/wasm32-unknown-unknown/release/
 
@@ -13,3 +14,11 @@ wasm-bindgen $target/$name.wasm --out-dir "$dest" --no-modules --no-typescript
 cp "web/index.html" "$dest"
 cp "web/main.css" "$dest"
 echo "output in $dest" 1>&2
+
+temp=$(mktemp -d)
+trap "rm -rf '$temp'" EXIT
+
+cd "$temp"
+cp -r "$dest" $name
+zip -r "$zipdest" "$name"
+echo "zip at $zipdest" 1>&2
