@@ -1,4 +1,5 @@
 use std::io::{Read, Write};
+use enum_map::Enum;
 use bracket_random::prelude::RandomNumberGenerator;
 use serde::{Serialize, Deserialize, Serializer, Deserializer};
 use hecs::{World, Entity};
@@ -7,13 +8,20 @@ use super::terrain::Terrain;
 use super::liquids::Liquid;
 use super::components::ComponentSerializationContext;
 
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Enum, Serialize, Deserialize)]
+pub enum GameStatus {
+    Playing,
+    Won
+}
+
 pub struct GameState {
     pub world: World,
     pub particles_world: World,
     pub terrain: TileMap<Terrain>,
     pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
-    pub rng: RandomNumberGenerator
+    pub rng: RandomNumberGenerator,
+    pub status: GameStatus
 }
 
 struct SaveWorld<'a> {
@@ -30,7 +38,8 @@ struct SaveGameState<'a> {
     pub terrain: &'a TileMap<Terrain>,
     pub liquids: &'a TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
-    pub rng: &'a RandomNumberGenerator
+    pub rng: &'a RandomNumberGenerator,
+    pub status: GameStatus
 }
 
 #[derive(Deserialize)]
@@ -39,7 +48,8 @@ struct LoadGameState {
     pub terrain: TileMap<Terrain>,
     pub liquids: TileMap<Option<Liquid>>,
     pub player: Option<Entity>,
-    pub rng: RandomNumberGenerator
+    pub rng: RandomNumberGenerator,
+    pub status: GameStatus
 }
 
 impl GameState {
@@ -73,7 +83,8 @@ impl <'a> SaveGameState<'a> {
             terrain: &state.terrain,
             liquids: &state.liquids,
             player: state.player,
-            rng: &state.rng
+            rng: &state.rng,
+            status: state.status
         }
     }
 }
@@ -86,7 +97,8 @@ impl LoadGameState {
             terrain: self.terrain,
             liquids: self.liquids,
             player: self.player,
-            rng: self.rng
+            rng: self.rng,
+            status: self.status
         }
     }
 }

@@ -3,7 +3,7 @@ use bracket_terminal::prelude::*;
 use hecs::Entity;
 use sevendrl_2021::log_err::result_error;
 use sevendrl_2021::bracket_views::{Input, View};
-use sevendrl_2021::game::{GameState, act, visual_tick};
+use sevendrl_2021::game::{GameState, GameStatus, act, visual_tick};
 use sevendrl_2021::game::graphics::Graphic;
 use sevendrl_2021::game::liquids::Liquid;
 use sevendrl_2021::game::components::{Position, Renderable, Health, Power, Energy};
@@ -297,6 +297,9 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
     fn tick(&mut self, state: &mut UiState, input: &InputImpl, ctx: &mut BTerm) -> Option<UiStateAction> {
         ctx.cls();
         if let Some(game_state) = &mut state.game_state {
+            if game_state.status == GameStatus::Won {
+                return Some(UiStateAction::WinGameAndMainMenu);
+            }
             visual_tick(game_state);
             if let Some(player) = game_state.player {
                 let view_centre = game_state.world.get::<Position>(player)

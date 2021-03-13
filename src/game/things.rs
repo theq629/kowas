@@ -34,3 +34,14 @@ pub fn orc(pos: Point, world: &mut World) -> Entity {
         components::ProvidesEnergy(5)
     ))
 }
+
+pub fn orc_lord(pos: Point, world: &mut World) -> Entity {
+    world.spawn((
+        components::Position(pos),
+        components::Renderable(Graphic::OrcLord),
+        components::Blocks,
+        components::Health::new(10),
+        components::ProvidesEnergy(1000),
+        components::IsPlayerGoal
+    ))
+}

@@ -47,6 +47,9 @@ pub struct Energy {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ProvidesEnergy(pub i32);
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct IsPlayerGoal;
+
 serialize_components!(
     Position,
     Renderable,
@@ -56,5 +59,6 @@ serialize_components!(
     Flying,
     Power,
     Energy,
-    ProvidesEnergy
+    ProvidesEnergy,
+    IsPlayerGoal
 );

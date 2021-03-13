@@ -13,7 +13,7 @@ use log::debug;
 use hecs::{World, Entity};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-pub use state::GameState;
+pub use state::{GameState, GameStatus};
 use actions::Action;
 use mapgen::gen_map;
 use systems::{ChangeResult, ChangeOk, ChangeErr};
@@ -29,7 +29,8 @@ pub fn new_game() -> GameState {
         terrain: gened.terrain,
         liquids: gened.liquids,
         player: gened.player,
-        rng: rng
+        rng: rng,
+        status: GameStatus::Playing
     }
 }
 
@@ -91,6 +92,8 @@ pub fn act(actor: Entity, action: Action, state: &mut GameState) -> ChangeResult
     run_action(actor, action, state).and_then(|ok| {
         debug!("updating flying");
         systems::update_flying(state);
+        debug!("checking win");
+        systems::check_win(state);
         debug!("checking deaths");
         systems::check_deaths(state);
         if let Some(player) = state.player {

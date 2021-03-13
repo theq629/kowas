@@ -300,7 +300,7 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
 }
 
 pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
-    let (terrain, rooms, start_room, _end_room) = {
+    let (terrain, rooms, start_room, end_room) = {
             let mut terrain = TileMap::new(dim, |_| Terrain::Floor);
             let (rooms, start_room, end_room) = gen_terrain(&mut terrain, rng);
             (terrain, rooms, start_room, end_room)
@@ -311,12 +311,16 @@ pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
 
     let player_pos = rooms[start_room].centre;
     let player = things::player(player_pos, &mut world);
+
+    let goal_pos = rooms[end_room].centre;
+    things::orc_lord(goal_pos, &mut world);
+
     for _ in 0..500 {
         let pos = Point::new(
             rng.range(0, dim.x),
             rng.range(0, dim.y)
         );
-        if !terrain[pos].is_solid() {
+        if !terrain[pos].is_solid() && pos != player_pos && pos != goal_pos {
             things::goblin(pos, &mut world);
         }
     }
@@ -325,7 +329,7 @@ pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
             rng.range(0, dim.x),
             rng.range(0, dim.y)
         );
-        if !terrain[pos].is_solid() {
+        if !terrain[pos].is_solid() && pos != player_pos && pos != goal_pos {
             things::orc(pos, &mut world);
         }
     }

@@ -12,6 +12,7 @@ pub enum Graphic {
     Gore,
     Goblin,
     Orc,
+    OrcLord,
     DamageEffect
 }
 
@@ -27,6 +28,7 @@ impl Graphic {
             Graphic::Gore => "gore",
             Graphic::Goblin => "goblin",
             Graphic::Orc => "orc",
+            Graphic::OrcLord => "orc lord",
             Graphic::DamageEffect => "damage effect"
         }
     }
