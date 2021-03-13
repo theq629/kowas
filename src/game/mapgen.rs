@@ -334,6 +334,15 @@ pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
             things::orc(pos, &mut world);
         }
     }
+    for _ in 0..100 {
+        let pos = Point::new(
+            rng.range(0, dim.x),
+            rng.range(0, dim.y)
+        );
+        if !terrain[pos].is_solid() && pos != player_pos && pos != goal_pos {
+            things::big_orc(pos, &mut world);
+        }
+    }
 
     let mut state = GeneratedWorld {
         world: world,
