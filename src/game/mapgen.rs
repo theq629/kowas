@@ -300,6 +300,33 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
     (rooms, start_room_i, end_room_i)
 }
 
+fn spawn_enemies_group<F, T>(num: u32, spawn: F, dim: Point, reserved_poses: &mut Vec<Point>, terrain: &TileMap<Terrain>, world: &mut World, rng: &mut RandomNumberGenerator)
+    where F: Fn (Point, &mut World) -> T
+{
+    for _ in 0..num {
+        let pos = Point::new(
+            rng.range(0, dim.x),
+            rng.range(0, dim.y)
+        );
+        if !terrain[pos].is_solid() && !reserved_poses.contains(&pos) {
+            spawn(pos, world);
+            reserved_poses.push(pos);
+        }
+    }
+}
+
+fn spawn_enemies(dim: Point, reserved_poses: &Vec<Point>, terrain: &TileMap<Terrain>, world: &mut World, rng: &mut RandomNumberGenerator) {
+    let num_slices = 10;
+    let slice_size = dim.y / num_slices;
+    let mut reserved_poses = reserved_poses.clone();
+
+    spawn_enemies_group(500, things::goblin, dim, &mut reserved_poses, terrain, world, rng);
+    let orc_max_y = slice_size * (num_slices - 1);
+    spawn_enemies_group(200, things::orc, Point::new(dim.x, orc_max_y), &mut reserved_poses, terrain, world, rng);
+    let big_orc_max_y = slice_size * (num_slices / 2);
+    spawn_enemies_group(100, things::big_orc, Point::new(dim.x, big_orc_max_y), &mut reserved_poses, terrain, world, rng);
+}
+
 pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
     let (terrain, rooms, start_room, end_room) = {
             let mut terrain = TileMap::new(dim, |_| Terrain::Floor);
@@ -316,33 +343,8 @@ pub fn gen_map(dim: Point, rng: &mut RandomNumberGenerator) -> GeneratedWorld {
     let goal_pos = rooms[end_room].centre;
     things::orc_lord(goal_pos, &mut world);
 
-    for _ in 0..500 {
-        let pos = Point::new(
-            rng.range(0, dim.x),
-            rng.range(0, dim.y)
-        );
-        if !terrain[pos].is_solid() && pos != player_pos && pos != goal_pos {
-            things::goblin(pos, &mut world);
-        }
-    }
-    for _ in 0..200 {
-        let pos = Point::new(
-            rng.range(0, dim.x),
-            rng.range(0, dim.y)
-        );
-        if !terrain[pos].is_solid() && pos != player_pos && pos != goal_pos {
-            things::orc(pos, &mut world);
-        }
-    }
-    for _ in 0..100 {
-        let pos = Point::new(
-            rng.range(0, dim.x),
-            rng.range(0, dim.y)
-        );
-        if !terrain[pos].is_solid() && pos != player_pos && pos != goal_pos {
-            things::big_orc(pos, &mut world);
-        }
-    }
+    let reserved_poses = vec![player_pos, goal_pos];
+    spawn_enemies(dim, &reserved_poses, &terrain, &mut world, rng);
 
     let mut state = GeneratedWorld {
         world: world,
