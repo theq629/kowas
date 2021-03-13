@@ -814,6 +814,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
 
 [[package]]
+name = "kowas"
+version = "0.1.0"
+dependencies = [
+ "bracket-geometry",
+ "bracket-pathfinding",
+ "bracket-random",
+ "bracket-terminal",
+ "enum-map",
+ "env_logger",
+ "hecs",
+ "log",
+ "serde",
+ "serde_cbor",
+ "textwrap",
+ "wasm-bindgen",
+ "web-sys",
+ "xdg",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1406,26 +1426,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "sevendrl-2021"
-version = "0.1.0"
-dependencies = [
- "bracket-geometry",
- "bracket-pathfinding",
- "bracket-random",
- "bracket-terminal",
- "enum-map",
- "env_logger",
- "hecs",
- "log",
- "serde",
- "serde_cbor",
- "textwrap",
- "wasm-bindgen",
- "web-sys",
- "xdg",
 ]
 
 [[package]]

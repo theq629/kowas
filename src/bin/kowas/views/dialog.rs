@@ -1,6 +1,6 @@
 use std::cmp::min;
 use bracket_terminal::prelude::*;
-use sevendrl_2021::bracket_views::{Input, View};
+use kowas::bracket_views::{Input, View};
 
 pub struct DialogChoice<S, A> {
     pub text: String,

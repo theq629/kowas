@@ -1,6 +1,6 @@
 use enum_map::{EnumMap, enum_map};
 use bracket_terminal::prelude::*;
-use sevendrl_2021::game::graphics::Graphic;
+use kowas::game::graphics::Graphic;
 use super::BracketGraphic;
 
 pub fn make_ascii() -> EnumMap<Graphic, BracketGraphic> {

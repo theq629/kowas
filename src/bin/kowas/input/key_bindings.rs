@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use bracket_terminal::prelude::*;
-use sevendrl_2021::bracket_views::Input;
+use kowas::bracket_views::Input;
 use super::keys::Key;
 
 pub struct KeyBindings {

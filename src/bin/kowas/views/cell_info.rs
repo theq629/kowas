@@ -1,6 +1,6 @@
 use bracket_geometry::prelude::Point;
-use sevendrl_2021::game::GameState;
-use sevendrl_2021::game::components::{Position, Renderable};
+use kowas::game::GameState;
+use kowas::game::components::{Position, Renderable};
 
 pub fn cell_info(pos: Point, state: &GameState) -> Vec<&str> {
     let mut info = Vec::new();

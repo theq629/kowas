@@ -1,6 +1,6 @@
 set -e
 
-name=rl
+name=kowas
 target=~/.cache/cargo/target
 dest=$target/web
 

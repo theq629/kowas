@@ -1,5 +1,5 @@
-use sevendrl_2021::game::directions::Direction;
-use sevendrl_2021::game::actions::Action;
+use kowas::game::directions::Direction;
+use kowas::game::actions::Action;
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Key {

@@ -1,9 +1,9 @@
 use bracket_terminal::prelude::*;
 use bracket_terminal::prelude::GameState as BracketGameState;
-use sevendrl_2021::easy_storage::{FileMode, File, get_storage};
-use sevendrl_2021::easy_quitter::{Quitter, get_quitter};
-use sevendrl_2021::bracket_views::{View, ViewStack};
-use sevendrl_2021::game::{GameState, new_game};
+use kowas::easy_storage::{FileMode, File, get_storage};
+use kowas::easy_quitter::{Quitter, get_quitter};
+use kowas::bracket_views::{View, ViewStack};
+use kowas::game::{GameState, new_game};
 use crate::graphics::GraphicLookup;
 use crate::input::{Key, KeyBindings, InputImpl, make_default_key_bindings};
 use super::views::{GameView, make_main_menu, make_intro_dialog, make_save_error_dialog, make_load_error_dialog, make_help_dialog, make_win_dialog, make_lose_dialog};

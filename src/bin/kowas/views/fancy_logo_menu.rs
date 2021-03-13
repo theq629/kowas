@@ -1,5 +1,5 @@
 use bracket_terminal::prelude::*;
-use sevendrl_2021::bracket_views::{Input, View};
+use kowas::bracket_views::{Input, View};
 
 struct ImageInfo {
     image: XpFile,
