@@ -18,6 +18,7 @@ pub enum Key {
     SwordWhirl,
     SwordFlurry,
     GetALotOfEnergy,
+    GetALotOfHealth,
     GainPower,
     Help,
     Quit
@@ -41,6 +42,7 @@ impl Key {
             Key::SwordWhirl => "sword whirl",
             Key::SwordFlurry => "sword flurry",
             Key::GetALotOfEnergy => "get a lot of energy",
+            Key::GetALotOfHealth => "get a lot of health",
             Key::GainPower => "get more powerful",
             Key::Help => "help",
             Key::Quit => "quit",

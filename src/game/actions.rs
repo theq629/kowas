@@ -14,6 +14,7 @@ pub enum Action {
     Get,
     Drop(Entity),
     GetALotOfEnergy,
+    GetALotOfHealth,
     GainPower
 }
 

@@ -48,6 +48,7 @@ pub fn make_default_key_bindings() -> KeyBindings {
     #[cfg(debug_assertions)]
     {
         bindings.bind(VirtualKeyCode::E, Key::GetALotOfEnergy);
+        bindings.bind(VirtualKeyCode::R, Key::GetALotOfHealth);
         bindings.bind(VirtualKeyCode::P, Key::GainPower);
     }
 

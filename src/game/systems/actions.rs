@@ -37,6 +37,9 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
         Action::GetALotOfEnergy => {
             super::get_a_lot_of_energy(actor, state)
         },
+        Action::GetALotOfHealth => {
+            super::get_a_lot_of_health(actor, state)
+        },
         Action::GainPower => {
             super::gain_power(actor, state)
         },

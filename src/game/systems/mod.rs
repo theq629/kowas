@@ -22,7 +22,7 @@ pub use getdrop::{get, drop};
 pub use melee::melee_attack_toward;
 pub use death::check_deaths;
 pub use flying::{update_flying, shove_toward};
-pub use debug::{get_a_lot_of_energy, gain_power};
+pub use debug::{get_a_lot_of_energy, get_a_lot_of_health, gain_power};
 pub use particles::tick_particles;
 pub use winning_losing::check_win_lose;
 pub use monster_ai::act_monsters;

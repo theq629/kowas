@@ -8,9 +8,9 @@ pub fn player(pos: Point, world: &mut World) -> Entity {
         components::Position(pos),
         components::Renderable(Graphic::Player),
         components::Blocks,
-        components::Health::new(20),
+        components::Health::new(50),
         components::Inventory(Vec::new()),
-        components::Power(1),
+        components::Power(6),
         components::Energy { value: 10 },
         components::IsPlayer
     ))
@@ -24,6 +24,7 @@ pub fn goblin(pos: Point, world: &mut World) -> Entity {
         components::Health::new(1),
         components::ProvidesEnergy(1),
         components::Power(1),
+        components::Speed(1),
         components::IsAi
     ))
 }
