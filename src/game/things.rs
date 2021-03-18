@@ -34,9 +34,9 @@ pub fn orc(pos: Point, world: &mut World) -> Entity {
         components::Position(pos),
         components::Renderable(Graphic::Orc),
         components::Blocks,
-        components::Health::new(10),
+        components::Health::new(15),
         components::ProvidesEnergy(5),
-        components::Power(10),
+        components::Power(2),
         components::Speed(2),
         components::IsAi
     ))
