@@ -23,12 +23,12 @@ pub enum Action {
 impl Action {
     pub fn needs_energy(self) -> i32 {
         match self {
-            Action::Shove(_) => 1,
-            Action::ThrowOff => 3,
-            Action::Heal => 10,
-            Action::SwordSlash(_) => 3,
-            Action::SwordWhirl => 5,
-            Action::SwordFlurry(_) => 2,
+            Action::Shove(_) => 2,
+            Action::ThrowOff => 6,
+            Action::Heal => 20,
+            Action::SwordSlash(_) => 6,
+            Action::SwordWhirl => 10,
+            Action::SwordFlurry(_) => 4,
             _ => 0
         }
     }
