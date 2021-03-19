@@ -199,31 +199,39 @@ impl GameView {
 
     fn handle_move_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
-            let res = act_player(Action::MeleeAttack(dir), game_state).or_else(|_| {
-                act_player(Action::Move(dir), game_state)
-            });
-            result_error(res);
+            if let Some(dir) = dir {
+                let res = act_player(Action::MeleeAttack(dir), game_state).or_else(|_| {
+                    act_player(Action::Move(dir), game_state)
+                });
+                result_error(res);
+            }
         });
     }
 
     fn handle_shove_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act_player(Action::Shove(dir), game_state))
+            if let Some(dir) = dir {
+                result_error(act_player(Action::Shove(dir), game_state))
+            }
         });
     }
 
     fn handle_slash_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act_player(Action::SwordSlash(dir), game_state))
+            if let Some(dir) = dir {
+                result_error(act_player(Action::SwordSlash(dir), game_state))
+            }
         });
     }
 
     fn handle_flurry_input(&mut self, game_state: &mut GameState, input: &InputImpl) {
         handle_directional_action_input(input, |dir| {
             self.input_mode = InputMode::Move;
-            result_error(act_player(Action::SwordFlurry(dir), game_state))
+            if let Some(dir) = dir {
+                result_error(act_player(Action::SwordFlurry(dir), game_state))
+            }
         });
     }
 
@@ -325,30 +333,33 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
 }
 
 fn handle_directional_action_input<F>(input: &InputImpl, mut action: F)
-    where F: FnMut(Direction) -> ()
+    where F: FnMut(Option<Direction>) -> ()
 {
     if input.is_pressed(Key::MoveN) {
-        action(Direction::N);
+        action(Some(Direction::N))
     }
     if input.is_pressed(Key::MoveS) {
-        action(Direction::S);
+        action(Some(Direction::S))
     }
     if input.is_pressed(Key::MoveE) {
-        action(Direction::E);
+        action(Some(Direction::E))
     }
     if input.is_pressed(Key::MoveW) {
-        action(Direction::W);
+        action(Some(Direction::W))
     }
     if input.is_pressed(Key::MoveNE) {
-        action(Direction::NE);
+        action(Some(Direction::NE))
     }
     if input.is_pressed(Key::MoveNW) {
-        action(Direction::NW);
+        action(Some(Direction::NW))
     }
     if input.is_pressed(Key::MoveSE) {
-        action(Direction::SE);
+        action(Some(Direction::SE))
     }
     if input.is_pressed(Key::MoveSW) {
-        action(Direction::SW);
+        action(Some(Direction::SW))
+    }
+    if input.is_pressed(Key::Cancel) {
+        action(None)
     }
 }

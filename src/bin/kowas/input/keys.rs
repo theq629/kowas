@@ -22,6 +22,7 @@ pub enum Key {
     GetALotOfEnergy,
     GetALotOfHealth,
     GainPower,
+    Cancel,
     Help,
     Quit
 }
@@ -48,6 +49,7 @@ impl Key {
             Key::GetALotOfEnergy => "get a lot of energy",
             Key::GetALotOfHealth => "get a lot of health",
             Key::GainPower => "get more powerful",
+            Key::Cancel => "cancel",
             Key::Help => "help",
             Key::Quit => "quit",
         }
