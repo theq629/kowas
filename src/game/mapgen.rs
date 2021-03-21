@@ -131,23 +131,23 @@ fn add_doors(start: Point, end: Point, margin: i32, prob: i32, terrain: &mut Til
         }
     };
     if end.y - start.y > margin * 2 {
-        if start.x > 1 {
+        if start.x > 0 {
             let y = rng.range(start.y + margin, end.y - margin);
-            terrain[Point::new(start.x - 1, y)] = choose(prob, rng);
+            terrain[Point::new(start.x, y)] = choose(prob, rng);
         }
         if end.x < terrain.dim.x - 1 {
             let y = rng.range(start.y + margin, end.y - margin);
-            terrain[Point::new(end.x + 1, y)] = choose(prob, rng);
+            terrain[Point::new(end.x, y)] = choose(prob, rng);
         }
     }
     if end.x - start.x > margin * 2 {
-        if start.y > 1 {
+        if start.y > 0 {
             let x = rng.range(start.x + margin, end.x - margin);
-            terrain[Point::new(x, start.y - 1)] = choose(prob, rng);
+            terrain[Point::new(x, start.y)] = choose(prob, rng);
         }
         if end.y < terrain.dim.y - 1 {
             let x = rng.range(start.x + margin, end.x - margin);
-            terrain[Point::new(x, end.y + 1)] = choose(prob, rng);
+            terrain[Point::new(x, end.y)] = choose(prob, rng);
         }
     }
 }
@@ -179,22 +179,22 @@ fn subdivide(start: Point, end: Point, depth: i32, terrain: &mut TileMap<Terrain
 
     if over_min_y && (!over_min_x || rng.range(0, 100) < 50) {
         let y = rng.range(start.y + margin, end.y - margin);
-        gen_horiz_wall(start.x, end.x + 1, y, terrain);
-        subdivide(start, Point::new(end.x, y - 1), depth + 1, terrain, rng, rooms);
-        subdivide(Point::new(start.x, y + 1), end, depth + 1, terrain, rng, rooms);
+        gen_horiz_wall(start.x, end.x, y, terrain);
+        subdivide(start, Point::new(end.x, y), depth + 1, terrain, rng, rooms);
+        subdivide(Point::new(start.x, y), end, depth + 1, terrain, rng, rooms);
     } else if over_min_x {
         let x = rng.range(start.x + margin, end.x - margin);
-        gen_vert_wall(x, start.y, end.y + 1, terrain);
-        subdivide(start, Point::new(x - 1, end.y), depth + 1, terrain, rng, rooms);
-        subdivide(Point::new(x + 1, start.y), end, depth + 1, terrain, rng, rooms);
+        gen_vert_wall(x, start.y, end.y, terrain);
+        subdivide(start, Point::new(x, end.y), depth + 1, terrain, rng, rooms);
+        subdivide(Point::new(x, start.y), end, depth + 1, terrain, rng, rooms);
     } else {
         rooms.push(Room::new(start, end));
     }
 }
 
 fn fill_room(room: &Room, terrain: &mut TileMap<Terrain>) {
-    for x in (room.start.x - 1)..(min(terrain.dim.x, room.end.x + 2)) {
-        for y in (room.start.y - 1)..(min(terrain.dim.y, room.end.y + 2)) {
+    for x in room.start.x..(min(terrain.dim.x, room.end.x + 1)) {
+        for y in room.start.y..(min(terrain.dim.y, room.end.y + 1)) {
             let pos = Point::new(x, y);
             if terrain[pos] != Terrain::BoundaryWall {
                 terrain[pos] = Terrain::Wall;
@@ -282,7 +282,7 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
     gen_rect(Point::zero(), dim, Terrain::BoundaryWall, terrain);
 
     let mut rooms = Vec::new();
-    subdivide(Point::new(1, 1), dim - Point::new(1, 1), 0, terrain, rng, &mut rooms);
+    subdivide(Point::zero(), dim, 0, terrain, rng, &mut rooms);
 
     let (start_room_i, _) = rooms.iter().enumerate()
         .max_by_key(|(_, r)| r.centre.y)
