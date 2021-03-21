@@ -115,6 +115,30 @@ fn gen_rect(start: Point, end: Point, new_ter: Terrain, terrain: &mut TileMap<Te
     }
 }
 
+fn gen_solid_room(start: Point, end: Point, terrain: &mut TileMap<Terrain>) {
+    let new_ter = Terrain::Wall;
+    for x in start.x..end.x {
+        let pos = Point::new(x, start.y);
+        if !terrain[pos].is_solid() {
+            terrain[pos] = new_ter;
+        }
+        let pos = Point::new(x, end.y - 1);
+        if !terrain[pos].is_solid() {
+            terrain[pos] = new_ter;
+        }
+    }
+    for y in (start.y + 1)..end.y {
+        let pos = Point::new(start.x, y);
+        if !terrain[pos].is_solid() {
+            terrain[pos] = new_ter;
+        }
+        let pos = Point::new(start.x - 1, y);
+        if !terrain[pos].is_solid() {
+            terrain[pos] = new_ter;
+        }
+    }
+}
+
 fn gen_horiz_wall(start_x: i32, end_x: i32, y: i32, terrain: &mut TileMap<Terrain>) {
     for x in start_x..end_x {
         let pos = Point::new(x, y);
@@ -305,6 +329,7 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
 
     let dont_fill = vec![start_room_i, end_room_i];
     fill_some_rooms(rooms.len() as u32 / 10, &rooms, &dont_fill, terrain, rng);
+    gen_solid_room(rooms[start_room_i].start, rooms[start_room_i].end, terrain);
     guarantee_path(rooms[start_room_i].centre, rooms[end_room_i].centre, terrain);
     reachablize_rooms(&rooms, start_room_i, terrain);
     remove_rubble(terrain);
