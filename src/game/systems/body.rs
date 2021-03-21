@@ -1,4 +1,4 @@
-use bracket_geometry::prelude::Point;
+use bracket_geometry::prelude::{Point, VectorLine};
 use hecs::Entity;
 use crate::game::state::GameState;
 use crate::game::directions::Direction;
@@ -8,6 +8,15 @@ use super::change::{ChangeResult, ChangeOk, ChangeErr};
 use super::flying::impact_shove;
 use super::particles::make_particle;
 use super::flying::shove;
+
+fn is_clear(src: Point, dst: Point, state: &GameState) -> bool {
+    for pos in VectorLine::new(src, dst).skip(1) {
+        if state.terrain[pos].is_solid() {
+            return false;
+        }
+    }
+    true
+}
 
 pub fn shove_toward(shover: Entity, dir: Direction, state: &mut GameState) -> ChangeResult {
     let pos = state.world.get::<Position>(shover)?.0.clone();
@@ -38,7 +47,7 @@ pub fn do_throw_off(centre: Point, power: i32, state: &mut GameState) -> ChangeR
             let r2 = dx * dx + dy * dy;
             if r2 > 0 && r2 <= radius2 {
                 let pos = centre + Point::new(dx, dy);
-                if state.terrain.is_valid(pos) {
+                if state.terrain.is_valid(pos) && is_clear(centre, pos, state) {
                     make_particle(pos, Graphic::ShoveEffect, state);
                     impact_shove(pos, (pos - centre) * damage / 2, state);
                 }

@@ -10,6 +10,15 @@ use super::flying::impact_shove;
 use super::structures::impact;
 use super::particles::make_particle;
 
+fn is_clear(src: Point, dst: Point, state: &GameState) -> bool {
+    for pos in VectorLine::new(src, dst).skip(1) {
+        if state.terrain[pos].is_solid() {
+            return false;
+        }
+    }
+    true
+}
+
 fn do_slash(pos: Point, dir: Direction, power: i32, state: &mut GameState) -> ChangeResult {
     let end_pos = pos + dir.to_point() * 2 * power;
     let mut damage = 2 * power;
@@ -53,7 +62,7 @@ pub fn do_whirl(centre: Point, power: i32, state: &mut GameState) -> ChangeResul
             let r2 = dx * dx + dy * dy;
             if r2 > 0 && r2 <= radius2 {
                 let pos = centre + Point::new(dx, dy);
-                if state.terrain.is_valid(pos) {
+                if state.terrain.is_valid(pos) && is_clear(centre, pos, state) {
                     make_particle(pos, Graphic::DamageEffect, state);
                     let _ = melee_damage(pos, damage, state);
                     impact_shove(pos, (pos - centre) * damage / 2, state);
@@ -81,7 +90,7 @@ fn do_flurry(centre: Point, dir: Direction, power: i32, state: &mut GameState) -
         let pos1 = pos0 + dir.perpendicular().to_point() * half_width;
         let pos2 = pos0 + dir.perpendicular().to_point() * -half_width;
         for pos in VectorLine::new(pos1, pos2) {
-            if pos != centre && state.terrain.is_valid(pos) {
+            if pos != centre && state.terrain.is_valid(pos) && is_clear(centre, pos, state) {
                 make_particle(pos, Graphic::DamageEffect, state);
                 let _ = melee_damage(pos, damage, state);
                 impact_shove(pos, (pos - centre) * damage, state);
