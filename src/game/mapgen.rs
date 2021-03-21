@@ -253,35 +253,37 @@ fn guarantee_path(start: Point, end: Point, terrain: &mut TileMap<Terrain>) {
     }
 }
 
-fn reachablize_rooms(rooms: &Vec<Room>, start_room_i: usize, terrain: &mut TileMap<Terrain>) {
-    let start_loc = terrain.to_location(rooms[start_room_i].centre);
-    let starts = vec![start_loc];
+fn find_reachablize_paths(rooms: &Vec<Room>, start: usize, terrain: &mut TileMap<Terrain>, to_clear: &mut Vec<usize>) {
+    let starts = vec![start];
     let max_steps = (terrain.dim.x + terrain.dim.y) * 10;
-
-    let mut to_clear = Vec::new();
-    {
-        let pather = TerrainPather::new(terrain);
-        let dijkstra_map = DijkstraMap::new(terrain.dim.x, terrain.dim.y, &starts, &pather, max_steps as f32);
-        for room in rooms.iter() {
-            let centre_loc = terrain.to_location(room.centre);
-            if terrain[centre_loc] == Terrain::Wall {
-                continue;
+    let pather = TerrainPather::new(terrain);
+    let dijkstra_map = DijkstraMap::new(terrain.dim.x, terrain.dim.y, &starts, &pather, max_steps as f32);
+    for room in rooms.iter() {
+        let centre_loc = terrain.to_location(room.centre);
+        if terrain[centre_loc] == Terrain::Wall {
+            continue;
+        }
+        let mut loc = centre_loc;
+        for _ in 0..max_steps {
+            if dijkstra_map.map[loc] < pather.bad_path_weight {
+                break;
             }
-            let mut loc = centre_loc;
-            for _ in 0..max_steps {
-                if dijkstra_map.map[loc] < pather.bad_path_weight {
-                    break;
-                }
-                if let Some(next_loc) = DijkstraMap::find_lowest_exit(&dijkstra_map, loc, &pather) {
-                    loc = next_loc;
-                } else {
-                    break;
-                }
-                to_clear.push(loc);
+            if let Some(next_loc) = DijkstraMap::find_lowest_exit(&dijkstra_map, loc, &pather) {
+                loc = next_loc;
+            } else {
+                break;
             }
+            to_clear.push(loc);
         }
     }
+}
 
+fn reachablize_rooms(rooms: &Vec<Room>, start_room_i: usize, end_room_i: usize, terrain: &mut TileMap<Terrain>) {
+    let start_loc = terrain.to_location(rooms[start_room_i].centre);
+    let end_loc = terrain.to_location(rooms[end_room_i].centre);
+    let mut to_clear = Vec::new();
+    find_reachablize_paths(rooms, start_loc, terrain, &mut to_clear);
+    find_reachablize_paths(rooms, end_loc, terrain, &mut to_clear);
     for loc in to_clear {
         terrain[loc] = Terrain::Floor;
     }
@@ -331,7 +333,7 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
     fill_some_rooms(rooms.len() as u32 / 10, &rooms, &dont_fill, terrain, rng);
     gen_solid_room(rooms[start_room_i].start, rooms[start_room_i].end, terrain);
     guarantee_path(rooms[start_room_i].centre, rooms[end_room_i].centre, terrain);
-    reachablize_rooms(&rooms, start_room_i, terrain);
+    reachablize_rooms(&rooms, start_room_i, end_room_i, terrain);
     remove_rubble(terrain);
 
     (rooms, start_room_i, end_room_i)
