@@ -35,7 +35,8 @@ impl Room {
 struct TerrainPather<'a> {
     terrain: &'a TileMap<Terrain>,
     solid_weight: f32,
-    rubble_weight: f32
+    rubble_weight: f32,
+    pub bad_path_weight: f32
 }
 
 impl <'a> TerrainPather<'a> {
@@ -44,7 +45,18 @@ impl <'a> TerrainPather<'a> {
         Self {
             terrain: terrain,
             solid_weight: rubble_weight * rubble_weight,
-            rubble_weight: rubble_weight
+            rubble_weight: rubble_weight,
+            bad_path_weight: rubble_weight
+        }
+    }
+
+    fn weight(&self, idx: usize) -> f32 {
+        if self.terrain[idx] == Terrain::Rubble {
+            self.rubble_weight
+        } else if self.terrain[idx].is_solid() {
+            self.solid_weight
+        } else {
+            1.0
         }
     }
 }
@@ -55,36 +67,35 @@ impl<'a> BaseMap for TerrainPather<'a> {
         let y = idx as i32 / self.terrain.dim.x;
         let mut exits = SmallVec::new();
 
-        let weight =
-            if self.terrain[idx] == Terrain::Rubble {
-                self.rubble_weight
-            } else if self.terrain[idx].is_solid() {
-                self.solid_weight
-            } else {
-                1.0
-            };
-
         if y > 0 {
             let i = idx - self.terrain.dim.x as usize;
-            if self.terrain[i] != Terrain::BoundaryWall {
+            let ter = self.terrain[i];
+            if ter != Terrain::BoundaryWall {
+                let weight = self.weight(i);
                 exits.push((i, weight));
             }
         }
         if x > 0 {
             let i = idx - 1;
-            if self.terrain[i] != Terrain::BoundaryWall {
+            let ter = self.terrain[i];
+            if ter != Terrain::BoundaryWall {
+                let weight = self.weight(i);
                 exits.push((i, weight));
             }
         }
         if x < self.terrain.dim.x - 1 {
             let i = idx + 1;
-            if self.terrain[i] != Terrain::BoundaryWall {
+            let ter = self.terrain[i];
+            if ter != Terrain::BoundaryWall {
+                let weight = self.weight(i);
                 exits.push((i, weight));
             }
         }
         if y < self.terrain.dim.y - 1 {
             let i = idx + self.terrain.dim.x as usize;
-            if self.terrain[i] != Terrain::BoundaryWall {
+            let ter = self.terrain[i];
+            if ter != Terrain::BoundaryWall {
+                let weight = self.weight(i);
                 exits.push((i, weight));
             }
         }
@@ -221,7 +232,7 @@ fn guarantee_path(start: Point, end: Point, terrain: &mut TileMap<Terrain>) {
 fn reachablize_rooms(rooms: &Vec<Room>, start_room_i: usize, terrain: &mut TileMap<Terrain>) {
     let start_loc = terrain.to_location(rooms[start_room_i].centre);
     let starts = vec![start_loc];
-    let max_steps = terrain.dim.x + terrain.dim.y;
+    let max_steps = (terrain.dim.x + terrain.dim.y) * 10;
 
     let mut to_clear = Vec::new();
     {
@@ -232,16 +243,17 @@ fn reachablize_rooms(rooms: &Vec<Room>, start_room_i: usize, terrain: &mut TileM
             if terrain[centre_loc] == Terrain::Wall {
                 continue;
             }
-            if dijkstra_map.map[centre_loc] == std::f32::MAX {
-                let mut loc = centre_loc;
-                for _ in 0..max_steps {
-                    if let Some(next_loc) = DijkstraMap::find_lowest_exit(&dijkstra_map, loc, &pather) {
-                        loc = next_loc;
-                    } else {
-                        break;
-                    }
-                    to_clear.push(loc);
+            let mut loc = centre_loc;
+            for _ in 0..max_steps {
+                if dijkstra_map.map[loc] < pather.bad_path_weight {
+                    break;
                 }
+                if let Some(next_loc) = DijkstraMap::find_lowest_exit(&dijkstra_map, loc, &pather) {
+                    loc = next_loc;
+                } else {
+                    break;
+                }
+                to_clear.push(loc);
             }
         }
     }
