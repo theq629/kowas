@@ -9,7 +9,8 @@ mod things;
 mod systems;
 mod state;
 
-use log::debug;
+use std::time::Instant;
+use log::{debug, info};
 use hecs::World;
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
@@ -21,7 +22,9 @@ use systems::{ChangeResult, ChangeOk, ChangeErr};
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
+    let gen_start = Instant::now();
     let gened = gen_map(dim, &mut rng);
+    info!("mapgen time: {:.2?}", gen_start.elapsed());
     GameState {
         world: gened.world,
         particles_world: World::new(),
