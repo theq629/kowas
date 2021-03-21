@@ -238,6 +238,17 @@ fn fill_room(room: &Room, terrain: &mut TileMap<Terrain>) {
     }
 }
 
+fn clear_room(room: &Room, terrain: &mut TileMap<Terrain>) {
+    for x in room.start.x..(min(terrain.dim.x, room.end.x + 1)) {
+        for y in room.start.y..(min(terrain.dim.y, room.end.y + 1)) {
+            let pos = Point::new(x, y);
+            if terrain[pos] != Terrain::BoundaryWall {
+                terrain[pos] = Terrain::Floor;
+            }
+        }
+    }
+}
+
 fn guarantee_path(start: Point, end: Point, terrain: &mut TileMap<Terrain>) {
     let pather = TerrainPather::new(terrain);
     let path = a_star_search(
@@ -302,6 +313,19 @@ fn fill_some_rooms(num: u32, rooms: &Vec<Room>, dont_fill: &Vec<usize>, terrain:
     }
 }
 
+fn clear_some_rooms(num: u32, rooms: &Vec<Room>, dont_fill: &Vec<usize>, terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) {
+    let mut to_fill = Vec::new();
+    for _ in 0..num {
+        to_fill.push(rng.range(0, rooms.len()));
+    }
+
+    for room_i in to_fill {
+        if !dont_fill.contains(&room_i) {
+            clear_room(&rooms[room_i], terrain);
+        }
+    }
+}
+
 fn remove_rubble(terrain: &mut TileMap<Terrain>) {
     let dim = terrain.dim.clone();
     for x in 0..dim.x {
@@ -331,6 +355,7 @@ fn gen_terrain(terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) 
 
     let dont_fill = vec![start_room_i, end_room_i];
     fill_some_rooms(rooms.len() as u32 / 10, &rooms, &dont_fill, terrain, rng);
+    clear_some_rooms(rooms.len() as u32 / 10, &rooms, &dont_fill, terrain, rng);
     gen_solid_room(rooms[start_room_i].start, rooms[start_room_i].end, terrain);
     guarantee_path(rooms[start_room_i].centre, rooms[end_room_i].centre, terrain);
     reachablize_rooms(&rooms, start_room_i, end_room_i, terrain);
