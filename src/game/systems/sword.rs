@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use bracket_geometry::prelude::{Point, VectorLine};
 use hecs::Entity;
 use crate::game::state::GameState;
@@ -85,15 +86,33 @@ fn do_flurry(centre: Point, dir: Direction, power: i32, state: &mut GameState) -
     let half_width = 2;
     let depth = 1 + power / 4;
     let damage = power;
-    for d in 0..(depth + 1) {
-        let pos0 = centre + dir.to_point() * d;
-        let pos1 = pos0 + dir.perpendicular().to_point() * half_width;
-        let pos2 = pos0 + dir.perpendicular().to_point() * -half_width;
+    let mut touched = HashSet::new();
+    let offsets =
+        if dir.is_cardinal () {
+            let mut offsets = vec![(Point::zero(), half_width, half_width)];
+            for _ in 0..depth {
+                offsets.push((dir.to_point(), half_width, half_width));
+            }
+            offsets
+        } else {
+            let mut offsets = vec![(Point::zero(), half_width, half_width)];
+            for _ in 0..(depth / 2) {
+                offsets.push((dir.clockwise().to_point(), half_width - 1, half_width));
+                offsets.push((dir.counterclockwise().to_point(), half_width, half_width));
+            }
+            offsets
+        };
+    let mut pos0 = centre;
+    for (offset, d1, d2) in offsets.iter() {
+        pos0 = pos0 + *offset;
+        let pos1 = pos0 + dir.clockwise().clockwise().to_point() * *d1;
+        let pos2 = pos0 + dir.clockwise().clockwise().to_point() * -*d2;
         for pos in VectorLine::new(pos1, pos2) {
-            if pos != centre && state.terrain.is_valid(pos) && is_clear(centre, pos, state) {
+            if pos != centre && state.terrain.is_valid(pos) && !touched.contains(&pos) && is_clear(centre, pos, state) {
                 make_particle(pos, Graphic::DamageEffect, state);
                 let _ = melee_damage(pos, damage, state);
                 impact_shove(pos, (pos - centre) * damage, state);
+                touched.insert(pos);
             }
         }
     }

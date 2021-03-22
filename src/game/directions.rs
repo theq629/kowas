@@ -25,6 +25,16 @@ impl Direction {
         Direction::SW
     ];
 
+    pub fn is_cardinal(&self) -> bool {
+        match self {
+            Direction::N => true,
+            Direction::S => true,
+            Direction::E => true,
+            Direction::W => true,
+            _ => false
+        }
+    }
+
     pub fn to_point(&self) -> Point {
         match self {
             Direction::N => Point::new(0, -1),
@@ -62,6 +72,32 @@ impl Direction {
             Direction::NW => Direction::NE,
             Direction::SE => Direction::SW,
             Direction::SW => Direction::SE
+        }
+    }
+
+    pub fn clockwise(self) -> Direction {
+        match self {
+            Direction::N => Direction::NE,
+            Direction::S => Direction::SW,
+            Direction::E => Direction::SE,
+            Direction::W => Direction::NW,
+            Direction::NE => Direction::E,
+            Direction::NW => Direction::N,
+            Direction::SE => Direction::S,
+            Direction::SW => Direction::W
+        }
+    }
+
+    pub fn counterclockwise(self) -> Direction {
+        match self {
+            Direction::N => Direction::NW,
+            Direction::S => Direction::SE,
+            Direction::E => Direction::NE,
+            Direction::W => Direction::SW,
+            Direction::NE => Direction::N,
+            Direction::NW => Direction::W,
+            Direction::SE => Direction::E,
+            Direction::SW => Direction::S
         }
     }
 }
