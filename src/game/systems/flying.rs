@@ -49,13 +49,26 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
     let mut last_ok_pos = cur_pos;
     let mut collision = None;
     let mut remaining_dist = vel_mag;
-    'posloop: for pos in VectorLine::new(cur_pos, new_pos) {
+    let mut cur_vel = vel;
+    let mut cur_vel_mag = vel_mag;
+    'posloop: for (pos_i, pos) in VectorLine::new(cur_pos, new_pos).enumerate() {
+        let vel_scale = match pos_i {
+            0 => 0.,
+            1 => 0.33,
+            2 => 0.66,
+            _ => 1.
+        };
+        cur_vel = Point::new(
+            (vel.x as f32 * vel_scale).round() as i32,
+            (vel.y as f32 * vel_scale).round() as i32
+        );
+        cur_vel_mag = (vel_mag as f32 * vel_scale).round() as i32;
         if remaining_dist < 0 {
             break 'posloop;
         }
         if state.terrain[pos].is_solid() {
-            result_error(impact(pos, vel, state));
-            result_error(terrain_collision_damage(entity, vel_mag, state));
+            result_error(impact(pos, cur_vel, state));
+            result_error(terrain_collision_damage(entity, cur_vel_mag, state));
             if state.terrain[pos].is_solid() {
                 break 'posloop;
             }
@@ -75,8 +88,8 @@ fn move_flying(entity: Entity, cur_pos: Point, vel: Point, state: &mut GameState
         entity_pos.0 = last_ok_pos;
     }
     if let Some(pos) = collision {
-        let _ = collision_damage(entity, pos, vel_mag, state);
-        impact_shove(pos, vel / 2, state);
+        let _ = collision_damage(entity, pos, cur_vel_mag, state);
+        impact_shove(pos, cur_vel / 2, state);
     }
 }
 
