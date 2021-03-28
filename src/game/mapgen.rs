@@ -157,7 +157,7 @@ fn gen_vert_wall(x: i32, start_y: i32, end_y: i32, terrain: &mut TileMap<Terrain
     }
 }
 
-fn add_doors(start: Point, end: Point, margin: i32, prob: i32, terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) {
+fn add_doors(start: Point, end: Point, margin: i32, prob: i32, double_prob: i32, terrain: &mut TileMap<Terrain>, rng: &mut RandomNumberGenerator) {
     let choose = |prob: i32, rng: &mut RandomNumberGenerator| {
         if rng.range(0, 100) < prob {
             Terrain::Floor
@@ -168,21 +168,37 @@ fn add_doors(start: Point, end: Point, margin: i32, prob: i32, terrain: &mut Til
     if end.y - start.y > margin * 2 {
         if start.x > 0 {
             let y = rng.range(start.y + margin, end.y - margin);
-            terrain[Point::new(start.x, y)] = choose(prob, rng);
+            let new_ter = choose(prob, rng);
+            terrain[Point::new(start.x, y)] = new_ter;
+            if new_ter == Terrain::Floor && y < end.y - margin - 2 {
+                terrain[Point::new(start.x, y + 1)] = choose(double_prob, rng);
+            }
         }
         if end.x < terrain.dim.x - 1 {
             let y = rng.range(start.y + margin, end.y - margin);
-            terrain[Point::new(end.x, y)] = choose(prob, rng);
+            let new_ter = choose(prob, rng);
+            terrain[Point::new(end.x, y)] = new_ter;
+            if new_ter == Terrain::Floor && y < end.y - margin - 2 {
+                terrain[Point::new(end.x, y + 1)] = choose(double_prob, rng);
+            }
         }
     }
     if end.x - start.x > margin * 2 {
         if start.y > 0 {
             let x = rng.range(start.x + margin, end.x - margin);
-            terrain[Point::new(x, start.y)] = choose(prob, rng);
+            let new_ter = choose(prob, rng);
+            terrain[Point::new(x, start.y)] = new_ter;
+            if new_ter == Terrain::Floor && x < end.x - margin - 2 {
+                terrain[Point::new(x + 1, start.y)] = choose(double_prob, rng);
+            }
         }
         if end.y < terrain.dim.y - 1 {
             let x = rng.range(start.x + margin, end.x - margin);
-            terrain[Point::new(x, end.y)] = choose(prob, rng);
+            let new_ter = choose(prob, rng);
+            terrain[Point::new(x, end.y)] = new_ter;
+            if new_ter == Terrain::Floor && x < end.x - margin - 2 {
+                terrain[Point::new(x + 1, end.y)] = choose(double_prob, rng);
+            }
         }
     }
 }
@@ -194,6 +210,7 @@ fn subdivide(start: Point, end: Point, depth: i32, terrain: &mut TileMap<Terrain
     let min_size_to_stop = 16;
     let door_margin = 1;
     let door_prob = 25;
+    let double_door_prob = 50;
 
     if depth > 16 {
         rooms.push(Room::new(start, end));
@@ -210,7 +227,7 @@ fn subdivide(start: Point, end: Point, depth: i32, terrain: &mut TileMap<Terrain
         }
     }
 
-    add_doors(start, end, door_margin, door_prob, terrain, rng);
+    add_doors(start, end, door_margin, door_prob, double_door_prob, terrain, rng);
 
     if over_min_y && (!over_min_x || rng.range(0, 100) < 50) {
         let y = rng.range(start.y + margin, end.y - margin);
