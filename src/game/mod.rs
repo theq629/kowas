@@ -22,8 +22,10 @@ use systems::{ChangeResult, ChangeOk, ChangeErr};
 pub fn new_game() -> GameState {
     let dim = Point::new(64, 128);
     let mut rng = RandomNumberGenerator::new();
+    #[cfg(not(target_arch = "wasm32"))]
     let gen_start = Instant::now();
     let gened = gen_map(dim, &mut rng);
+    #[cfg(not(target_arch = "wasm32"))]
     info!("mapgen time: {:.2?}", gen_start.elapsed());
     GameState {
         world: gened.world,
