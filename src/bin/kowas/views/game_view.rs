@@ -24,7 +24,8 @@ enum InputMode {
 pub struct GameView {
     bg_col: RGB,
     input_mode: InputMode,
-    action_bindings_info: Vec<(String, String)>
+    action_bindings_info: Vec<(String, String)>,
+    action_bindings_info_width: u32
 }
 
 impl GameView {
@@ -39,17 +40,23 @@ impl GameView {
             .map(|(ok, iks)| (ok, iks))
             .collect();
         bindings.sort_by_key(|(ok, _)| ok.clone());
-        let action_bindings_info = bindings.iter()
+        let action_bindings_info: Vec<_> = bindings.iter()
             .map(|(ok, iks)| {
                 let iks: Vec<_> = iks.iter().map(|ik| input_key_name(*ik).to_lowercase()).collect();
                 (ok.name().to_string(), iks.join(","))
             })
             .collect();
 
+        let mut width = 0 as u32;
+        for (ok, iks) in action_bindings_info.iter() {
+            width += 1 + iks.len() as u32 + 1 + ok.len() as u32;
+        }
+
         GameView {
             bg_col: RGB::named(BLACK),
             input_mode: InputMode::Move,
-            action_bindings_info: action_bindings_info
+            action_bindings_info: action_bindings_info,
+            action_bindings_info_width: width
         }
     }
 }
@@ -122,13 +129,21 @@ impl GameView {
 
         ctx.fill_region(Rect::with_size(0, row, dim_x as i32, 1), to_cp437(' '), RGB::named(BLACK), bg);
 
+        let num_width = 4;
+        let margin = 4;
+        let health_width = 6 + num_width;
+        let energy_width = 6 + num_width;
+        let spacing = (dim_x - health_width - energy_width - margin) / 2;
+        let health_start = spacing;
+        let energy_start = spacing + health_width + margin;
+
         match self.input_mode {
             InputMode::Move => {
                 if let Some(player) = game_state.player {
-                    let energy = game_state.world.get::<Energy>(player).unwrap();
-                    ctx.print_color(0, row, RGB::named(BLACK), bg, format!("ENERGY {}", energy.value));
                     let health = game_state.world.get::<Health>(player).unwrap();
-                    ctx.print_color(12, row, RGB::named(BLACK), bg, format!("HEALTH {}", health.value));
+                    ctx.print_color(health_start, row, RGB::named(BLACK), bg, format!("HEALTH {}", health.value));
+                    let energy = game_state.world.get::<Energy>(player).unwrap();
+                    ctx.print_color(energy_start, row, RGB::named(BLACK), bg, format!("ENERGY {}", energy.value));
                 }
             },
             InputMode::Shove => {
@@ -146,16 +161,16 @@ impl GameView {
     fn draw_keys_ui(&mut self, _game_state: &GameState, ctx: &mut BTerm) {
         let bg = RGB::named(LIGHTGREY);
 
-        let (_, dim_y) = ctx.get_char_size();
+        let (dim_x, dim_y) = ctx.get_char_size();
         let row = (dim_y - 1) as i32;
 
-        let mut x = 0;
+        let mut x = (dim_x - self.action_bindings_info_width) / 2;
         for (ok, iks) in self.action_bindings_info.iter() {
             x += 1;
             ctx.print_color(x, row, RGB::named(BLACK), bg, iks);
-            x += iks.len() + 1;
+            x += iks.len() as u32 + 1;
             ctx.print_color(x, row, RGB::named(DARKGREY), bg, ok);
-            x += ok.len();
+            x += ok.len() as u32;
         }
     }
 
