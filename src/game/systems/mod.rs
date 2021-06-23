@@ -14,6 +14,7 @@ mod structures;
 mod winning_losing;
 mod monster_ai;
 mod actions;
+mod stat_max_estimates;
 
 pub use change::{ChangeResult, ChangeOk, ChangeErr};
 pub use do_nothing::do_nothing;
@@ -26,3 +27,4 @@ pub use particles::tick_particles;
 pub use winning_losing::check_win_lose;
 pub use monster_ai::act_monsters;
 pub use actions::act;
+pub use stat_max_estimates::update_stat_max_estimates;

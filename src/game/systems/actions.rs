@@ -68,7 +68,7 @@ fn run_action(actor: Entity, action: Action, state: &mut GameState) -> ChangeRes
     }
     dispatch_action(actor, action, state)?;
     if let Ok(mut actor_energy) = state.world.get_mut::<Energy>(actor) {
-        actor_energy.value -= needs_energy;
+        actor_energy.change(-needs_energy);
     }
     Ok(ChangeOk)
 }

@@ -15,7 +15,7 @@ fn die(dier: Entity, state: &mut GameState) -> ChangeResult {
     if let Some(player) = state.player {
         let dier_prov_energy = state.world.get::<ProvidesEnergy>(dier)?.0;
         let mut player_energy = state.world.get_mut::<Energy>(player)?;
-        player_energy.value += dier_prov_energy;
+        player_energy.change(dier_prov_energy);
     }
     state.world.despawn(dier)?;
     Ok(ChangeOk)

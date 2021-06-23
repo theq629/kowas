@@ -67,6 +67,6 @@ pub fn throw_off(attacker: Entity, state: &mut GameState) -> ChangeResult {
 
 pub fn heal(healee: Entity, state: &mut GameState) -> ChangeResult {
     let mut healee_health = state.world.get_mut::<Health>(healee)?;
-    healee_health.value += 10;
+    healee_health.change(10);
     Ok(ChangeOk)
 }

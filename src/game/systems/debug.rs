@@ -5,13 +5,13 @@ use super::change::{ChangeResult, ChangeOk};
 
 pub fn get_a_lot_of_energy(getter: Entity, state: &mut GameState) -> ChangeResult {
     let mut energy = state.world.get_mut::<Energy>(getter)?;
-    energy.value += 1000;
+    energy.change(1000);
     Ok(ChangeOk)
 }
 
 pub fn get_a_lot_of_health(getter: Entity, state: &mut GameState) -> ChangeResult {
     let mut health = state.world.get_mut::<Health>(getter)?;
-    health.value += 1000;
+    health.change(1000);
     Ok(ChangeOk)
 }
 

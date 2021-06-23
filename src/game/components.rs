@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 use bracket_geometry::prelude::Point;
 use crate::game::graphics::Graphic;
+use crate::game::max_estimate::MaxEstimate;
 use crate::serialize_components;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -23,6 +24,23 @@ impl Health {
             value: max
         }
     }
+
+    pub fn change(&mut self, delta: i32) {
+        self.value += delta;
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct MaxHealthEstimate {
+    pub estimate: MaxEstimate
+}
+
+impl MaxHealthEstimate {
+    pub fn new() -> Self {
+        Self {
+            estimate: MaxEstimate::new()
+        }
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -36,6 +54,31 @@ pub struct Power(pub i32);
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Energy {
     pub value: i32
+}
+
+impl Energy {
+    pub fn new(max: i32) -> Self {
+        Self {
+            value: max
+        }
+    }
+
+    pub fn change(&mut self, delta: i32) {
+        self.value += delta;
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct MaxEnergyEstimate {
+    pub estimate: MaxEstimate
+}
+
+impl MaxEnergyEstimate {
+    pub fn new() -> Self {
+        Self {
+            estimate: MaxEstimate::new()
+        }
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize)]

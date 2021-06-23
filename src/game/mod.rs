@@ -1,6 +1,7 @@
 pub mod terrain;
 pub mod liquids;
 pub mod graphics;
+mod max_estimate;
 pub mod components;
 pub mod directions;
 pub mod actions;
@@ -27,7 +28,7 @@ pub fn new_game() -> GameState {
     let gened = gen_map(dim, &mut rng);
     #[cfg(not(target_arch = "wasm32"))]
     info!("mapgen time: {:.2?}", gen_start.elapsed());
-    GameState {
+    let mut state = GameState {
         world: gened.world,
         particles_world: World::new(),
         terrain: gened.terrain,
@@ -36,7 +37,9 @@ pub fn new_game() -> GameState {
         rng: rng,
         status: GameStatus::Playing,
         turn: 0
-    }
+    };
+    systems::update_stat_max_estimates(&mut state);
+    state
 }
 
 pub fn act_player(action: Action, state: &mut GameState) -> ChangeResult {
@@ -44,6 +47,7 @@ pub fn act_player(action: Action, state: &mut GameState) -> ChangeResult {
         debug!("acting for player");
         systems::act(player, action, state)?;
         systems::act_monsters(state);
+        systems::update_stat_max_estimates(state);
         state.turn += 1;
         Ok(ChangeOk)
     } else {

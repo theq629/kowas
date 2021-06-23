@@ -6,16 +6,13 @@ use kowas::bracket_views::{Input, View};
 use kowas::game::{GameState, GameStatus, act_player, visual_tick};
 use kowas::game::graphics::Graphic;
 use kowas::game::liquids::Liquid;
-use kowas::game::components::{Position, Renderable, Health, Energy};
+use kowas::game::components::{Position, Renderable, Health, Energy, MaxHealthEstimate, MaxEnergyEstimate};
 use kowas::game::actions::Action;
 use kowas::game::directions::Direction;
 use crate::input::{Key, KeyBindings, InputImpl, input_key_name};
 use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
 use super::cell_info::cell_info;
-
-const HEALTH_LOW: i32 = 50;
-const HEALTH_LOW_CRITICAL: i32 = 25;
 
 enum InputMode {
     Move,
@@ -142,17 +139,23 @@ impl GameView {
         let health_start = spacing;
         let energy_start = spacing + health_width + margin;
 
+        let choose_bg = |value: i32, max: i32| {
+            if value <= max / 3 { bg_critical }
+            else if value <= 2 * max / 3 { bg_low }
+            else { bg }
+        };
+
         match self.input_mode {
             InputMode::Move => {
                 if let Some(player) = game_state.player {
                     let health = game_state.world.get::<Health>(player).unwrap();
-                    let health_bg =
-                        if health.value <= HEALTH_LOW_CRITICAL { bg_critical }
-                        else if health.value <= HEALTH_LOW { bg_low }
-                        else { bg };
+                    let health_max_estimate = game_state.world.get::<MaxHealthEstimate>(player).unwrap().estimate.estimate;
+                    let health_bg = choose_bg(health.value, health_max_estimate);
                     ctx.print_color(health_start, row, RGB::named(BLACK), health_bg, format!(" HEALTH {} ", health.value));
                     let energy = game_state.world.get::<Energy>(player).unwrap();
-                    ctx.print_color(energy_start, row, RGB::named(BLACK), bg, format!(" ENERGY {} ", energy.value));
+                    let energy_max_estimate = game_state.world.get::<MaxEnergyEstimate>(player).unwrap().estimate.estimate;
+                    let energy_bg = choose_bg(energy.value, energy_max_estimate);
+                    ctx.print_color(energy_start, row, RGB::named(BLACK), energy_bg, format!("ENERGY {} ", energy.value));
                 }
             },
             InputMode::Shove => {
