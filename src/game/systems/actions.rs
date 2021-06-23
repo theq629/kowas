@@ -43,14 +43,6 @@ fn dispatch_action(actor: Entity, action: Action, state: &mut GameState) -> Chan
             debug!("sword flurry");
             super::sword::flurry_toward(actor, dir, state)
         },
-        Action::Get => {
-            debug!("get");
-            super::get(actor, state)
-        },
-        Action::Drop(entity) => {
-            debug!("drop");
-            super::drop(actor, entity, state)
-        },
         Action::GetALotOfEnergy => {
             debug!("get a lot of energy");
             super::get_a_lot_of_energy(actor, state)

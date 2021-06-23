@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use hecs::Entity;
 use crate::game::directions::Direction;
 
 #[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
@@ -13,8 +12,6 @@ pub enum Action {
     SwordSlash(Direction),
     SwordWhirl,
     SwordFlurry(Direction),
-    Get,
-    Drop(Entity),
     GetALotOfEnergy,
     GetALotOfHealth,
     GainPower

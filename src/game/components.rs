@@ -1,6 +1,5 @@
 use serde::{Serialize, Deserialize};
 use bracket_geometry::prelude::Point;
-use hecs::Entity;
 use crate::game::graphics::Graphic;
 use crate::serialize_components;
 
@@ -27,9 +26,6 @@ impl Health {
         }
     }
 }
-
-#[derive(Clone, Serialize, Deserialize)]
-pub struct Inventory(pub Vec<Entity>);
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Flying {
@@ -64,7 +60,6 @@ serialize_components!(
     Renderable,
     Blocks,
     Health,
-    Inventory,
     Flying,
     Power,
     Energy,
