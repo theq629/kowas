@@ -1,4 +1,5 @@
 use std::cmp::{max, min};
+use std::collections::HashMap;
 use bracket_terminal::prelude::*;
 use kowas::log_err::result_error;
 use kowas::bracket_views::{Input, View};
@@ -8,7 +9,7 @@ use kowas::game::liquids::Liquid;
 use kowas::game::components::{Position, Renderable, Health, Energy};
 use kowas::game::actions::Action;
 use kowas::game::directions::Direction;
-use crate::input::{Key, InputImpl};
+use crate::input::{Key, KeyBindings, InputImpl, input_key_name};
 use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
 use super::cell_info::cell_info;
@@ -22,14 +23,33 @@ enum InputMode {
 
 pub struct GameView {
     bg_col: RGB,
-    input_mode: InputMode
+    input_mode: InputMode,
+    action_bindings_info: Vec<(String, String)>
 }
 
 impl GameView {
-    pub fn new() -> Self {
+    pub fn new(key_bindings: &KeyBindings) -> Self {
+        let mut bindings: HashMap<Key, Vec<VirtualKeyCode>> = HashMap::new();
+        for (ik, ok) in key_bindings.bindings().iter() {
+            bindings.entry(*ok).or_insert_with(|| Vec::new()).push(*ik);
+        }
+        let mut bindings: Vec<_> = bindings
+            .iter()
+            .filter(|(ok, _)| ok.is_special_action())
+            .map(|(ok, iks)| (ok, iks))
+            .collect();
+        bindings.sort_by_key(|(ok, _)| ok.clone());
+        let action_bindings_info = bindings.iter()
+            .map(|(ok, iks)| {
+                let iks: Vec<_> = iks.iter().map(|ik| input_key_name(*ik).to_lowercase()).collect();
+                (ok.name().to_string(), iks.join(","))
+            })
+            .collect();
+
         GameView {
             bg_col: RGB::named(BLACK),
-            input_mode: InputMode::Move
+            input_mode: InputMode::Move,
+            action_bindings_info: action_bindings_info
         }
     }
 }
@@ -94,31 +114,48 @@ impl GameView {
         }
     }
 
-    fn draw_ui(&mut self, game_state: &GameState, ctx: &mut BTerm) {
+    fn draw_stats_ui(&mut self, game_state: &GameState, ctx: &mut BTerm) {
         let bg = RGB::named(LIGHTGREY);
 
         let (dim_x, dim_y) = ctx.get_char_size();
+        let row = (dim_y - 2) as i32;
 
-        ctx.fill_region(Rect::with_size(0, dim_y - 1, dim_x, 1), to_cp437(' '), RGB::named(BLACK), bg);
+        ctx.fill_region(Rect::with_size(0, row, dim_x as i32, 1), to_cp437(' '), RGB::named(BLACK), bg);
 
         match self.input_mode {
             InputMode::Move => {
                 if let Some(player) = game_state.player {
                     let energy = game_state.world.get::<Energy>(player).unwrap();
-                    ctx.print_color(0, dim_y - 1, RGB::named(BLACK), bg, format!("ENERGY {}", energy.value));
+                    ctx.print_color(0, row, RGB::named(BLACK), bg, format!("ENERGY {}", energy.value));
                     let health = game_state.world.get::<Health>(player).unwrap();
-                    ctx.print_color(12, dim_y - 1, RGB::named(BLACK), bg, format!("HEALTH {}", health.value));
+                    ctx.print_color(12, row, RGB::named(BLACK), bg, format!("HEALTH {}", health.value));
                 }
             },
             InputMode::Shove => {
-                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to shove");
+                ctx.print_color_centered(row, RGB::named(BLACK), bg, "select direction to shove");
             },
             InputMode::SwordSlash => {
-                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to slash");
+                ctx.print_color_centered(row, RGB::named(BLACK), bg, "select direction to slash");
             },
             InputMode::SwordFlurry => {
-                ctx.print_color_centered(dim_y - 1, RGB::named(BLACK), bg, "select direction to flurry");
+                ctx.print_color_centered(row, RGB::named(BLACK), bg, "select direction to flurry");
             }
+        }
+    }
+
+    fn draw_keys_ui(&mut self, _game_state: &GameState, ctx: &mut BTerm) {
+        let bg = RGB::named(LIGHTGREY);
+
+        let (_, dim_y) = ctx.get_char_size();
+        let row = (dim_y - 1) as i32;
+
+        let mut x = 0;
+        for (ok, iks) in self.action_bindings_info.iter() {
+            x += 1;
+            ctx.print_color(x, row, RGB::named(BLACK), bg, iks);
+            x += iks.len() + 1;
+            ctx.print_color(x, row, RGB::named(DARKGREY), bg, ok);
+            x += ok.len();
         }
     }
 
@@ -320,7 +357,8 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
                     .map(|p| p.0)
                     .unwrap_or(Point::new(0, 0));
                 self.draw_map(view_centre, game_state, &state.graphics, ctx);
-                self.draw_ui(game_state, ctx);
+                self.draw_stats_ui(game_state, ctx);
+                self.draw_keys_ui(game_state, ctx);
                 self.draw_tooltips(view_centre, game_state, ctx);
             }
         }

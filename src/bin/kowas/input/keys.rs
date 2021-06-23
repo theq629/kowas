@@ -64,4 +64,17 @@ impl Key {
             _ => None
         }
     }
+
+    pub fn is_special_action(self) -> bool {
+        match self {
+            Key::Help => true,
+            Key::Shove => true,
+            Key::ThrowOff => true,
+            Key::Heal => true,
+            Key::SwordSlash => true,
+            Key::SwordWhirl => true,
+            Key::SwordFlurry => true,
+            _ => false
+        }
+    }
 }

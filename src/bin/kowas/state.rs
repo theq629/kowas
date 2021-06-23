@@ -168,7 +168,7 @@ impl BracketState {
             UiStateAction::NewGame => {
                 self.state.new_game();
                 self.views.clear();
-                self.views.push(GameView::new());
+                self.views.push(GameView::new(&self.key_bindings));
                 if self.state.show_intro_dialog {
                     self.views.push(make_intro_dialog());
                 }
@@ -177,7 +177,7 @@ impl BracketState {
                 match self.state.load_game() {
                     Ok(()) => {
                         self.views.clear();
-                        self.views.push(GameView::new());
+                        self.views.push(GameView::new(&self.key_bindings));
                     },
                     Err(e) => {
                         self.views.push(make_load_error_dialog(e));
