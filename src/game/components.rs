@@ -14,15 +14,13 @@ pub struct Blocks;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Health {
-    pub value: i32,
-    pub max: i32
+    pub value: i32
 }
 
 impl Health {
     pub fn new(max: i32) -> Self {
         Self {
-            value: max,
-            max: max
+            value: max
         }
     }
 }
