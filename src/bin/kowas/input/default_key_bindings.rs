@@ -24,8 +24,8 @@ fn make_numpad_direction_bindings(bindings: &mut KeyBindings) {
     bindings.bind(VirtualKeyCode::Numpad6, Key::MoveE);
     bindings.bind(VirtualKeyCode::Numpad8, Key::MoveN);
     bindings.bind(VirtualKeyCode::Numpad2, Key::MoveS);
-    bindings.bind(VirtualKeyCode::Numpad9, Key::MoveNW);
-    bindings.bind(VirtualKeyCode::Numpad7, Key::MoveNE);
+    bindings.bind(VirtualKeyCode::Numpad7, Key::MoveNW);
+    bindings.bind(VirtualKeyCode::Numpad9, Key::MoveNE);
     bindings.bind(VirtualKeyCode::Numpad1, Key::MoveSW);
     bindings.bind(VirtualKeyCode::Numpad3, Key::MoveSE);
 }
