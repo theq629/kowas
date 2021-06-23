@@ -3,7 +3,8 @@ set -e
 cargo build --release
 
 name=kowas
-target=~/.cache/cargo/target/release/$name
+cache=${1:-~/.cache/cargo}
+target="$cache/target/release/$name"
 tardest=$PWD/$name.tar.gz
 
 temp=$(mktemp -d)

@@ -1,7 +1,8 @@
 set -e
 
 name=kowas
-target=~/.cache/cargo/target
+cache=${1:-~/.cache/cargo}
+target="$cache/target"
 dest=$target/web
 zipdest=$PWD/web/kowas-web.zip
 
