@@ -1,7 +1,7 @@
 use bracket_terminal::prelude::*;
 use crate::state::{UiState, UiStateAction};
 use super::{FancyLogoMenuView, FancyLogoMenuChoice};
-use crate::branding::TITLE;
+use crate::branding::{TITLE, VERSION};
 
 bracket_terminal::embedded_resource!(LOGO_IMAGE, "../../../../resources/logo.xp");
 
@@ -48,5 +48,5 @@ pub fn make_main_menu(
         warnings.push("storage not available, games cannot be saved".to_string());
     }
 
-    FancyLogoMenuView::new(TITLE.to_string().to_uppercase(), logo, choices, warnings)
+    FancyLogoMenuView::new(TITLE.to_string().to_uppercase(), VERSION.to_string(), logo, choices, warnings)
 }

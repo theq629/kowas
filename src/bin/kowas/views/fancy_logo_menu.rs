@@ -38,6 +38,7 @@ pub struct InternalFancyLogoMenuChoice<S, A> {
 pub struct FancyLogoMenuView<S, A> {
     bg_col: RGB,
     title_col: RGB,
+    note_col: RGB,
     warning_col: RGB,
     choice_col: RGB,
     choice_disabled_col: RGB,
@@ -46,12 +47,13 @@ pub struct FancyLogoMenuView<S, A> {
     choice_hover_glyph: FontCharType,
     logo_image: Option<ImageInfo>,
     title: String,
+    note: String,
     choices: Vec<InternalFancyLogoMenuChoice<S, A>>,
     warnings: Vec<String>
 }
 
 impl <S, A> FancyLogoMenuView<S, A> {
-    pub fn new(title: String, logo: Option<XpFile>, choices: Vec<FancyLogoMenuChoice<S, A>>, warnings: Vec<String>) -> Self {
+    pub fn new(title: String, note: String, logo: Option<XpFile>, choices: Vec<FancyLogoMenuChoice<S, A>>, warnings: Vec<String>) -> Self {
         let internal_choices = choices.into_iter().map(|choice| {
             let key_i = choice.text.find(choice.key);
             let mut key_lower = choice.key.clone();
@@ -69,6 +71,7 @@ impl <S, A> FancyLogoMenuView<S, A> {
         FancyLogoMenuView {
             bg_col: RGB::named(BLACK),
             title_col: RGB::from_u8(0xff, 0x00, 0x00),
+            note_col: RGB::from_u8(0x44, 0x00, 0x00),
             warning_col: RGB::from_u8(0x7e, 0x80, 0x7f),
             choice_col: RGB::from_u8(0xdd, 0x00, 0x00),
             choice_disabled_col: RGB::from_u8(0x66, 0x00, 0x00),
@@ -77,6 +80,7 @@ impl <S, A> FancyLogoMenuView<S, A> {
             choice_hover_glyph: 175,
             logo_image: logo.map(|i| ImageInfo::new(i)),
             title: title,
+            note: note,
             choices: internal_choices,
             warnings: warnings
         }
@@ -88,7 +92,8 @@ impl <S, A> FancyLogoMenuView<S, A> {
         let (dim_x, dim_y) = ctx.get_char_size();
         let menu_start_y = dim_y / 2 - (self.choices.len() * 2 - 1) as u32 / 2;
         let mut title_y = menu_start_y;
-        let warnings_start_y = dim_y - self.warnings.len() as u32 - 1;
+        let note_start_y = dim_y - 2;
+        let warnings_start_y = note_start_y - self.warnings.len() as u32;
 
         if let Some(img) = &self.logo_image {
             let (img_dim_x, img_dim_y) = img.dim;
@@ -132,6 +137,9 @@ impl <S, A> FancyLogoMenuView<S, A> {
                 }
             }
         }
+
+        let note_x = (dim_x - self.note.len() as u32) / 2;
+        ctx.print_color(note_x, note_start_y, self.note_col, self.bg_col, &self.note);
 
         let mut y = warnings_start_y;
         for warning in self.warnings.iter() {
