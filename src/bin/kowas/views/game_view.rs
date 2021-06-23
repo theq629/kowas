@@ -14,6 +14,9 @@ use crate::state::{UiState, UiStateAction};
 use crate::graphics::GraphicLookup;
 use super::cell_info::cell_info;
 
+const HEALTH_LOW: i32 = 50;
+const HEALTH_LOW_CRITICAL: i32 = 25;
+
 enum InputMode {
     Move,
     Shove,
@@ -123,6 +126,8 @@ impl GameView {
 
     fn draw_stats_ui(&mut self, game_state: &GameState, ctx: &mut BTerm) {
         let bg = RGB::named(LIGHTGREY);
+        let bg_low = RGB::named(YELLOW);
+        let bg_critical = RGB::named(RED);
 
         let (dim_x, dim_y) = ctx.get_char_size();
         let row = (dim_y - 2) as i32;
@@ -141,9 +146,13 @@ impl GameView {
             InputMode::Move => {
                 if let Some(player) = game_state.player {
                     let health = game_state.world.get::<Health>(player).unwrap();
-                    ctx.print_color(health_start, row, RGB::named(BLACK), bg, format!("HEALTH {}", health.value));
+                    let health_bg =
+                        if health.value <= HEALTH_LOW_CRITICAL { bg_critical }
+                        else if health.value <= HEALTH_LOW { bg_low }
+                        else { bg };
+                    ctx.print_color(health_start, row, RGB::named(BLACK), health_bg, format!(" HEALTH {} ", health.value));
                     let energy = game_state.world.get::<Energy>(player).unwrap();
-                    ctx.print_color(energy_start, row, RGB::named(BLACK), bg, format!("ENERGY {}", energy.value));
+                    ctx.print_color(energy_start, row, RGB::named(BLACK), bg, format!(" ENERGY {} ", energy.value));
                 }
             },
             InputMode::Shove => {
