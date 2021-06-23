@@ -21,11 +21,29 @@ enum InputMode {
     SwordFlurry
 }
 
+struct Message {
+    time: u32,
+    text: String,
+    disabled: bool
+}
+
+impl Message {
+    pub fn new(text: String) -> Self {
+        Self {
+            time: 0,
+            text: text,
+            disabled: false
+        }
+    }
+}
+
 pub struct GameView {
     bg_col: RGB,
     input_mode: InputMode,
     action_bindings_info: Vec<(String, String)>,
-    action_bindings_info_width: u32
+    action_bindings_info_width: u32,
+    health_message: Message,
+    energy_message: Message
 }
 
 impl GameView {
@@ -56,7 +74,9 @@ impl GameView {
             bg_col: RGB::named(BLACK),
             input_mode: InputMode::Move,
             action_bindings_info: action_bindings_info,
-            action_bindings_info_width: width
+            action_bindings_info_width: width,
+            health_message: Message::new("low health".to_string()),
+            energy_message: Message::new("low energy".to_string())
         }
     }
 }
@@ -139,10 +159,19 @@ impl GameView {
         let health_start = spacing;
         let energy_start = spacing + health_width + margin;
 
-        let choose_bg = |value: i32, max: i32| {
-            if value <= max / 3 { bg_critical }
-            else if value <= 2 * max / 3 { bg_low }
-            else { bg }
+        let choose_bg = |value: i32, max: i32, msg: &mut Message| {
+            if value <= max / 3 {
+                if msg.disabled {
+                    msg.disabled = false;
+                    msg.time = 50;
+                }
+                bg_critical
+            } else if value <= 2 * max / 3 {
+                bg_low
+            } else {
+                msg.disabled = true;
+                bg
+            }
         };
 
         match self.input_mode {
@@ -150,11 +179,11 @@ impl GameView {
                 if let Some(player) = game_state.player {
                     let health = game_state.world.get::<Health>(player).unwrap();
                     let health_max_estimate = game_state.world.get::<MaxHealthEstimate>(player).unwrap().estimate.estimate;
-                    let health_bg = choose_bg(health.value, health_max_estimate);
+                    let health_bg = choose_bg(health.value, health_max_estimate, &mut self.health_message);
                     ctx.print_color(health_start, row, RGB::named(BLACK), health_bg, format!(" HEALTH {} ", health.value));
                     let energy = game_state.world.get::<Energy>(player).unwrap();
                     let energy_max_estimate = game_state.world.get::<MaxEnergyEstimate>(player).unwrap().estimate.estimate;
-                    let energy_bg = choose_bg(energy.value, energy_max_estimate);
+                    let energy_bg = choose_bg(energy.value, energy_max_estimate, &mut self.energy_message);
                     ctx.print_color(energy_start, row, RGB::named(BLACK), energy_bg, format!("ENERGY {} ", energy.value));
                 }
             },
@@ -183,6 +212,40 @@ impl GameView {
             x += iks.len() as u32 + 1;
             ctx.print_color(x, row, RGB::named(DARKGREY), bg, ok);
             x += ok.len() as u32;
+        }
+    }
+
+    fn draw_messages(&mut self, ctx: &mut BTerm) {
+        let fg = RGB::named(BLACK);
+        let bg = RGB::named(RED);
+
+        let (dim_x, dim_y) = ctx.get_char_size();
+
+        let mut messages = Vec::new();
+        if self.health_message.time > 0 {
+            messages.push(&mut self.health_message);
+        }
+        if self.energy_message.time > 0 {
+            messages.push(&mut self.energy_message);
+        }
+        if messages.is_empty() {
+            return;
+        }
+        let max_width = messages.iter()
+            .map(|m| m.text.len())
+            .max()
+            .unwrap_or(0);
+
+        let start_y = (dim_y - messages.len() as u32) / 2;
+        let start_x = (dim_x - max_width as u32) / 2;
+        ctx.fill_region(Rect::with_size(start_x - 1, start_y - 1, max_width as u32 + 1, messages.len() as u32 + 1), to_cp437(' '), RGB::named(BLACK), bg);
+
+        let mut y = start_y;
+        for msg in messages.iter_mut() {
+            let x = (dim_x - msg.text.len() as u32) / 2;
+            ctx.print_color(x, y, fg, bg, &msg.text);
+            msg.time -= 1;
+            y += 1;
         }
     }
 
@@ -386,6 +449,7 @@ impl View<UiState, Key, InputImpl, UiStateAction> for GameView {
                 self.draw_map(view_centre, game_state, &state.graphics, ctx);
                 self.draw_stats_ui(game_state, ctx);
                 self.draw_keys_ui(game_state, ctx);
+                self.draw_messages(ctx);
                 self.draw_tooltips(view_centre, game_state, ctx);
             }
         }
